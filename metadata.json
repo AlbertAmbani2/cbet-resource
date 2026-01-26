@@ -1,0 +1,8 @@
+{
+  "name": "Copy of cbetresources - TVET Digital Marketplace",
+  "description": "A scalable e-commerce marketplace for TVET institutions to buy and sell digital academic resources including notes, schemes of work, and lesson plans with AI-driven recommendations.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
