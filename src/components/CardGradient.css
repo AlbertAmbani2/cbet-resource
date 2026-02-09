@@ -1,0 +1,152 @@
+.card-container {
+  position: relative;
+  width: 400px;
+  height: 500px;
+  perspective: 1200px;
+}
+
+.card {
+  position: absolute;
+  width: 280px;
+  height: 380px;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-front {
+  background: linear-gradient(135deg, #2d2d5f 0%, #3d2b5e 50%, #2d2d5f 100%);
+  z-index: 50;
+  transform: translateX(0) translateY(0) rotateY(0deg) rotateZ(-5deg);
+  animation: cardFloat 3s ease-in-out infinite;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-back-1 {
+  background: linear-gradient(135deg, #6b3fb3 0%, #e94c89 100%);
+  z-index: 40;
+  transform: translateX(20px) translateY(20px) rotateY(-15deg) rotateZ(-10deg);
+  opacity: 0.9;
+}
+
+.card-back-2 {
+  background: linear-gradient(135deg, #3b5bdb 0%, #7b3ff2 100%);
+  z-index: 30;
+  transform: translateX(40px) translateY(40px) rotateY(-30deg) rotateZ(-15deg);
+  opacity: 0.7;
+}
+
+.card-back-3 {
+  background: linear-gradient(135deg, #ea4c89 0%, #f7a441 100%);
+  z-index: 20;
+  transform: translateX(60px) translateY(60px) rotateY(-45deg) rotateZ(-20deg);
+  opacity: 0.5;
+}
+
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotateY(0deg) rotateZ(-5deg);
+  }
+  50% {
+    transform: translateX(-5px) translateY(-10px) rotateY(5deg) rotateZ(-5deg);
+  }
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
+.card-chip {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #ffa500, #ffb700);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.card-number {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  line-height: 1.6;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.card-name {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.visa-logo {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+@media (max-width: 1024px) {
+  .card-container {
+    width: 300px;
+    height: 400px;
+  }
+
+  .card {
+    width: 240px;
+    height: 320px;
+    padding: 20px;
+  }
+
+  .card-number {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-container {
+    width: 100%;
+    height: 300px;
+  }
+
+  .card {
+    width: 200px;
+    height: 280px;
+    padding: 16px;
+  }
+
+  .card-chip {
+    width: 40px;
+    height: 40px;
+  }
+
+  .card-number {
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+
+  .card-name {
+    font-size: 0.8rem;
+  }
+}

@@ -1,0 +1,221 @@
+.payment {
+  padding: 100px 0;
+  background: linear-gradient(180deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+}
+
+.payment-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.payment-left {
+  z-index: 10;
+}
+
+.payment-left h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 24px;
+  color: var(--text-light);
+}
+
+.payment-left p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.feature {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.checkmark {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-blue);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.feature span {
+  color: var(--text-light);
+  line-height: 1.6;
+  padding-top: 4px;
+}
+
+.btn-start {
+  padding: 14px 32px;
+  background: var(--accent-blue);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-start:hover {
+  background: var(--accent-purple);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(59, 91, 219, 0.3);
+}
+
+.payment-right {
+  position: relative;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-illustration {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.character {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  font-size: 4rem;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.payment-badge {
+  position: absolute;
+  background: var(--dark-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.badge-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--accent-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.payment-badge.success .badge-icon {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+}
+
+.badge-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.badge-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.payment-badge.received {
+  top: 20%;
+  left: 0;
+}
+
+.payment-badge.success {
+  bottom: 20%;
+  left: 0;
+}
+
+.wallet-icon {
+  position: absolute;
+  bottom: 10%;
+  right: 15%;
+  font-size: 3rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.tag-label {
+  position: absolute;
+  bottom: 30%;
+  right: 5%;
+  font-size: 1.5rem;
+  color: var(--accent-blue);
+  font-weight: 700;
+  transform: rotate(-25deg);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .payment-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .payment-left h2 {
+    font-size: 2.2rem;
+  }
+
+  .payment-right {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment {
+    padding: 60px 0;
+  }
+
+  .payment-left h2 {
+    font-size: 1.8rem;
+  }
+
+  .payment-right {
+    height: 300px;
+  }
+
+  .character {
+    font-size: 2.5rem;
+  }
+
+  .wallet-icon {
+    font-size: 2rem;
+  }
+}
