@@ -1,9 +1,21 @@
 import './Hero.css'
-import CardGradient from './CardGradient'
+import { SparklesCore } from './ui/sparkles'
 
 export default function Hero() {
   return (
     <section className="hero">
+      <div className="hero-particles">
+        <SparklesCore
+          id="hero-sparkles"
+          background="transparent"
+          minSize={0.4}
+          maxSize={1.2}
+          particleDensity={60}
+          className="w-full h-full"
+          particleColor="#3b5bdb"
+          speed={2}
+        />
+      </div>
       <div className="hero-background"></div>
       <div className="container">
         <div className="hero-content">
@@ -21,7 +33,7 @@ export default function Hero() {
           </div>
 
           <div className="hero-right">
-            <CardGradient />
+            <img src="/images/hero-image.png" alt="Hero" className="hero-image" />
           </div>
         </div>
 
