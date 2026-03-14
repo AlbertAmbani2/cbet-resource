@@ -25,6 +25,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 a {
   font-weight: 500;
   color: var(--accent-blue);
@@ -62,6 +66,7 @@ button {
 button:hover {
   background-color: var(--accent-purple);
   transform: translateY(-2px);
+  color: white;
 }
 button:focus,
 button:focus-visible {

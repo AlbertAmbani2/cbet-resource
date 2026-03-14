@@ -21,20 +21,20 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Company</h4>
             <ul>
-              <li><a href="#about">About Us</a></li>
-              <li><a href="#mission">Our Mission</a></li>
-              <li><a href="#impact">Impact</a></li>
-              <li><a href="#team">Team</a></li>
+              <li><a href="#faq">About Us</a></li>
+              <li><a href="#resources">Resources</a></li>
+              <li><a href="#educators">For Educators</a></li>
+              <li><a href="#hero">Home</a></li>
             </ul>
           </div>
 
           <div className="footer-section">
             <h4>For Users</h4>
             <ul>
-              <li><a href="#for-students">For Students</a></li>
-              <li><a href="#for-educators">For Educators</a></li>
+              <li><a href="#resources">For Students</a></li>
+              <li><a href="#educators">For Educators</a></li>
               <li><a href="#resources">Browse Resources</a></li>
-              <li><a href="#dashboard">Dashboard</a></li>
+              <li><a href="#signup">Get Started</a></li>
             </ul>
           </div>
 
@@ -42,9 +42,9 @@ export default function Footer() {
             <h4>Resources</h4>
             <ul>
               <li><a href="#faq">FAQ</a></li>
-              <li><a href="#contact">Contact Us</a></li>
-              <li><a href="#guides">Guides</a></li>
-              <li><a href="#privacy">Privacy Policy</a></li>
+              <li><a href="#signup">Sign Up</a></li>
+              <li><a href="#resources">Resources</a></li>
+              <li><a href="#educators">Become Educator</a></li>
             </ul>
           </div>
 

@@ -32,6 +32,11 @@
   text-decoration: none;
   cursor: pointer;
   min-width: fit-content;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: var(--accent-blue);
 }
 
 .logo-icon {
@@ -70,6 +75,7 @@
 }
 
 .btn-download {
+  display: inline-block;
   padding: 10px 24px;
   background: transparent;
   border: 1px solid var(--text-secondary);
@@ -77,11 +83,15 @@
   border-radius: 6px;
   font-weight: 500;
   white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
 .btn-download:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
+  color: white;
+
 }
 
 @media (max-width: 1024px) {

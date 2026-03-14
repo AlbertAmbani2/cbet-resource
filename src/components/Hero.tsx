@@ -3,7 +3,7 @@ import { SparklesCore } from './ui/sparkles'
 
 export default function Hero() {
   return (
-    <section className="hero">
+    <section id="hero" className="hero">
       <div className="hero-particles">
         <SparklesCore
           id="hero-sparkles"
@@ -27,8 +27,8 @@ export default function Hero() {
               digital marketplace for CBET-aligned academic resources in Kenya.
             </p>
             <div className="hero-buttons">
-              <button className="btn-primary">Explore Resources</button>
-              <button className="btn-secondary">Start Teaching</button>
+              <a href="#resources" className="btn-primary">Explore Resources</a>
+              <a href="#educators" className="btn-secondary">Start Teaching</a>
             </div>
           </div>
 

@@ -2,7 +2,7 @@ import './Payment.css'
 
 export default function Payment() {
   return (
-    <section className="payment">
+    <section id="signup" className="payment">
       <div className="container">
         <div className="payment-content">
           <div className="payment-left">
@@ -28,7 +28,7 @@ export default function Payment() {
               </div>
             </div>
 
-            <button className="btn-start">Start Your Journey</button>
+            <a href="#signup" className="btn-start">Start Your Journey</a>
           </div>
 
           <div className="payment-right">

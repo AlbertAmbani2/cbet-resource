@@ -2,7 +2,7 @@ import './Solutions.css'
 
 export default function Solutions() {
   return (
-    <section className="solutions">
+    <section id="resources" className="solutions">
       <div className="container">
         <h2 className="section-title">Powerful Features for TVET Excellence</h2>
 
@@ -20,10 +20,10 @@ export default function Solutions() {
               Students can read online previews and download materials
               for offline study whenever needed.
             </p>
-            <button className="btn-small">Browse Resources</button>
+            <a href="#resources" className="btn-small">Browse Resources</a>
           </div>
 
-          <div className="solution-card solution-card-2">
+          <div id="educators" className="solution-card solution-card-2">
             <div className="solution-header">
               <div className="icon-circle">📊</div>
               <h3>Educator Dashboard</h3>
@@ -38,7 +38,7 @@ export default function Solutions() {
                 with data visualization. Get insights to improve your
                 educational offerings and grow your earnings.
               </p>
-              <button className="btn-small">Start Selling</button>
+              <a href="#signup" className="btn-small">Start Selling</a>
             </div>
           </div>
 
