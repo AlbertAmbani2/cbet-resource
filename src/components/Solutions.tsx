@@ -1,57 +1,52 @@
+﻿import { BarChart3, TrendingUp } from 'lucide-react'
 import './Solutions.css'
 
 export default function Solutions() {
   return (
     <section id="resources" className="solutions">
       <div className="container">
-        <h2 className="section-title">Powerful Features for TVET Excellence</h2>
+        <div className="section-head">
+          <span className="section-kicker">Outcomes</span>
+          <h2 className="section-title">Built Around Trainer Success</h2>
+          <p className="section-subtitle">
+            Department-based uploads, admin review, and open browsing for everyone.
+          </p>
+        </div>
 
         <div className="solutions-grid">
-          <div className="solution-card solution-card-1">
+          <div className="solution-card solution-card-2">
             <div className="solution-header">
-              <div className="icon-circle">📖</div>
-              <h3>Digital Library</h3>
-              <span className="badge-small">Your Learning Hub</span>
+              <div className="icon-circle">
+                <BarChart3 aria-hidden="true" />
+              </div>
+              <h3>Publish With Confidence</h3>
+              <p className="subtitle">For Trainers</p>
             </div>
-            <div className="amount">1000+</div>
-            <h4>Curated Resources</h4>
-            <p>
-              Browse a marketplace of notes, schemes of work, and lesson plans.
-              Students can read online previews and download materials
-              for offline study whenever needed.
-            </p>
-            <a href="#resources" className="btn-small">Browse Resources</a>
-          </div>
-
-          <div id="educators" className="solution-card solution-card-2">
-            <div className="solution-header">
-              <div className="icon-circle">📊</div>
-              <h3>Educator Dashboard</h3>
-              <p className="subtitle">Manage and monetize your content</p>
-            </div>
-            <button className="btn-unlock">📈 Track Analytics</button>
+            <button className="btn-unlock">
+              <TrendingUp aria-hidden="true" />
+              <span>Track Review Status</span>
+            </button>
 
             <div className="simple-bill">
-              <h4>Performance Analytics</h4>
+              <h4>Admin-Reviewed Content</h4>
               <p>
-                Monitor revenue growth, unit sales, and resource ratings
-                with data visualization. Get insights to improve your
-                educational offerings and grow your earnings.
+                Upload resources by department. Admin reviews every submission
+                before it is published, and will add pricing later.
               </p>
-              <a href="#signup" className="btn-small">Start Selling</a>
+              <a href="#signup" className="btn-small">Create Trainer Account</a>
             </div>
           </div>
 
           <div className="solution-card solution-card-3">
-            <h3>Secure Payments</h3>
+            <h3>Open Access Browsing</h3>
             <div className="crypto-display">
               <div className="crypto-item">
-                <span className="amount-large">M-Pesa</span>
-                <span className="crypto-label">Express STK</span>
+                <span className="amount-large">No Sign-In</span>
+                <span className="crypto-label">Browse Resources</span>
               </div>
               <div className="crypto-item">
-                <span className="amount-large">Card</span>
-                <span className="crypto-label">Payments</span>
+                <span className="amount-large">Admin Managed</span>
+                <span className="crypto-label">Publishing & Pricing</span>
               </div>
             </div>
           </div>

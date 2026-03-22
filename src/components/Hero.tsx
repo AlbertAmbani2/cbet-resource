@@ -1,4 +1,4 @@
-import './Hero.css'
+﻿import './Hero.css'
 import { SparklesCore } from './ui/sparkles'
 
 export default function Hero() {
@@ -23,12 +23,13 @@ export default function Hero() {
             <button className="badge">TVET Educational Excellence</button>
             <h1 className="hero-title">Quality Resources,<br />Empowered Learning</h1>
             <p className="hero-description">
-              cbet-resource bridges the gap between educators and students with a scalable
-              digital marketplace for CBET-aligned academic resources in Kenya.
+              cbet-resource empowers Trainers with department-based uploads and admin-reviewed
+              publishing for CBET-aligned resources in Kenya. Anyone can browse resources
+              without signing in.
             </p>
             <div className="hero-buttons">
               <a href="#resources" className="btn-primary">Explore Resources</a>
-              <a href="#educators" className="btn-secondary">Start Teaching</a>
+              <a href="#trainers-hub" className="btn-secondary">Become a Trainer</a>
             </div>
           </div>
 
@@ -47,11 +48,12 @@ export default function Hero() {
             <div className="stat-label">CBET-Aligned Materials</div>
           </div>
           <div className="stat">
-            <div className="stat-value">1k+ Educators</div>
-            <div className="stat-label">Share Their Expertise</div>
+            <div className="stat-value">Admin Reviewed</div>
+            <div className="stat-label">Resources Verified Before Publish</div>
           </div>
         </div>
       </div>
     </section>
   )
 }
+

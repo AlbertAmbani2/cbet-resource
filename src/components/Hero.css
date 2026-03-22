@@ -94,6 +94,8 @@
 .btn-primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(59, 91, 219, 0.3);
+  color: white;
+
 }
 
 .btn-secondary {
@@ -164,8 +166,8 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   padding: 60px 0;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
+  /* border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color); */
   position: relative;
   z-index: 20;
 }

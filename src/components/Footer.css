@@ -48,9 +48,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
   transition: all 0.3s ease;
   text-decoration: none;
+}
+
+.social-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-light);
+}
+
+.social-icon:hover svg {
+  color: white;
 }
 
 .social-icon:hover {

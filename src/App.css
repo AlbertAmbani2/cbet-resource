@@ -22,6 +22,31 @@
   letter-spacing: -0.02em;
 }
 
+.section-head {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-head .section-title {
+  margin-bottom: 12px;
+}
+
+.section-kicker {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+  margin-bottom: 12px;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 1.8rem;

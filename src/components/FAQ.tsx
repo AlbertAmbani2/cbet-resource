@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import './FAQ.css'
 
 interface FAQItem {
@@ -14,17 +14,17 @@ export default function FAQ() {
     {
       id: 0,
       question: 'What is cbet-resource?',
-      answer: 'cbet-resource is a digital marketplace designed for the Kenyan TVET (Technical and Vocational Education and Training) ecosystem. We bridge the gap between educators and students by providing a scalable platform for CBET-aligned academic resources including notes, schemes of work, and lesson plans.'
+      answer: 'cbet-resource is a digital platform for Kenyan TVET (Technical and Vocational Education and Training) Trainers to upload CBET-aligned materials. Admin reviews every submission before it is published for everyone to browse.'
     },
     {
       id: 1,
-      question: 'How do I buy resources as a student?',
-      answer: 'Students can browse our curated marketplace of learning materials. You can preview resources online and purchase them securely using M-Pesa or card payments. Once purchased, you can read online or download for offline study.'
+      question: 'Do I need an account to view resources?',
+      answer: 'No. Anyone can browse published resources without signing in. Trainer accounts are only required to upload materials.'
     },
     {
       id: 2,
-      question: 'How can educators monetize their resources?',
-      answer: 'Educators can upload their notes, lesson plans, and schemes of work to our platform. You get access to a comprehensive dashboard to manage your catalog, track earnings, and view performance analytics with revenue growth insights.'
+      question: 'How do Trainers upload resources?',
+      answer: 'Create a Trainer account, select your department, and upload your lesson plans, notes, and schemes of work. Admin reviews all submissions before publishing, and pricing will be added later by admin.'
     },
     {
       id: 3,
@@ -54,7 +54,7 @@ export default function FAQ() {
               >
                 <span>{faq.question}</span>
                 <span className="toggle-icon">
-                  {openId === faq.id ? '✕' : '+'}
+                  {openId === faq.id ? '×' : '+'}
                 </span>
               </button>
               {openId === faq.id && (
@@ -73,7 +73,7 @@ export default function FAQ() {
             <p>Encrypted & Verified</p>
           </div>
           <div className="stat-card">
-            <h3>Educators</h3>
+            <h3>Trainers</h3>
             <div className="stat-number">1000+</div>
             <p>Share Resources on cbet-resource</p>
           </div>
@@ -83,9 +83,9 @@ export default function FAQ() {
             <p>CBET-Aligned Materials</p>
           </div>
           <div className="stat-card">
-            <h3>Students</h3>
-            <div className="stat-number">Growing</div>
-            <p>Learning on cbet-resource</p>
+            <h3>Access</h3>
+            <div className="stat-number">Open</div>
+            <p>Browse Without Sign-In</p>
           </div>
         </div>
       </div>

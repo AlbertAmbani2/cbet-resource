@@ -51,8 +51,12 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 700;
   flex-shrink: 0;
+}
+
+.checkmark svg {
+  width: 16px;
+  height: 16px;
 }
 
 .feature span {
@@ -101,8 +105,13 @@
   position: absolute;
   top: 10%;
   right: 10%;
-  font-size: 4rem;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+.character svg {
+  width: 72px;
+  height: 72px;
+  color: var(--accent-blue);
 }
 
 .payment-badge {
@@ -126,8 +135,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
   flex-shrink: 0;
+}
+
+.badge-icon svg {
+  width: 20px;
+  height: 20px;
+  color: white;
 }
 
 .payment-badge.success .badge-icon {
@@ -160,8 +174,13 @@
   position: absolute;
   bottom: 10%;
   right: 15%;
-  font-size: 3rem;
   animation: float 3s ease-in-out infinite;
+}
+
+.wallet-icon svg {
+  width: 44px;
+  height: 44px;
+  color: var(--accent-blue);
 }
 
 .tag-label {
@@ -214,10 +233,16 @@
   }
 
   .character {
-    font-size: 2.5rem;
+    right: 8%;
   }
 
-  .wallet-icon {
-    font-size: 2rem;
+  .character svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .wallet-icon svg {
+    width: 32px;
+    height: 32px;
   }
 }

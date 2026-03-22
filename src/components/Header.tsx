@@ -1,3 +1,4 @@
+﻿import { BookOpen } from 'lucide-react'
 import './Header.css'
 
 export default function Header() {
@@ -6,14 +7,17 @@ export default function Header() {
       <div className="container">
         <div className="header-content">
           <a href="#hero" className="logo">
-            <div className="logo-icon">📚</div>
+            <div className="logo-icon">
+              <BookOpen aria-hidden="true" />
+            </div>
             <span className="logo-text">cbet-resource</span>
           </a>
           
           <nav className="nav-menu">
+            <a href="#paths">Start Here</a>
+            <a href="#how-it-works">How It Works</a>
             <a href="#resources">Resources</a>
-            <a href="#educators">For Educators</a>
-            <a href="#students">For Students</a>
+            <a href="#trainers-hub">For Trainers</a>
             <a href="#faq">About Us</a>
           </nav>
 
@@ -23,3 +27,5 @@ export default function Header() {
     </header>
   )
 }
+
+

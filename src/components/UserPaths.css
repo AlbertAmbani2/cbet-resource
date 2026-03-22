@@ -1,0 +1,84 @@
+﻿.paths {
+  padding: 100px 0;
+  background: linear-gradient(180deg, var(--dark-secondary) 0%, var(--dark-tertiary) 100%);
+}
+
+.paths-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.path-card {
+  background: var(--dark-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.path-card.featured {
+  background: linear-gradient(135deg, rgba(59, 91, 219, 0.12) 0%, rgba(123, 63, 242, 0.08) 100%);
+  border-color: rgba(59, 91, 219, 0.3);
+}
+
+.path-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.path-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+
+.path-card h3 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--text-light);
+}
+
+.path-card p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.path-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0 0 8px 0;
+  color: var(--text-light);
+}
+
+.path-list li::before {
+  content: '•';
+  color: var(--accent-blue);
+  margin-right: 10px;
+}
+
+.path-card .btn-primary,
+.path-card .btn-secondary {
+  align-self: flex-start;
+}
+
+@media (max-width: 768px) {
+  .paths {
+    padding: 60px 0;
+  }
+}
+
