@@ -1,7 +1,10 @@
 ﻿import './Hero.css'
 import { SparklesCore } from './ui/sparkles'
+import TrainerCTA from './CTAs/TrainerCTA'
+import { useTrainerSignup } from '../features/TrainerOnboarding'
 
 export default function Hero() {
+  const { openSignup } = useTrainerSignup()
   return (
     <section id="hero" className="hero">
       <div className="hero-particles">
@@ -28,7 +31,11 @@ export default function Hero() {
             </p>
             <div className="hero-buttons">
               <a href="#resources" className="btn-primary">Browse Now</a>
-              <a href="#trainers-hub" className="btn-secondary">Become a Trainer</a>
+              <TrainerCTA
+                variant="secondary"
+                label="Become a Trainer"
+                onSignupClick={() => openSignup('hero')}
+              />
             </div>
           </div>
 

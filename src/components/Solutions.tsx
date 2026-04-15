@@ -1,7 +1,10 @@
 ﻿import { BarChart3, TrendingUp } from 'lucide-react'
 import './Solutions.css'
+import TrainerCTA from './CTAs/TrainerCTA'
+import { useTrainerSignup } from '../features/TrainerOnboarding'
 
 export default function Solutions() {
+  const { openSignup } = useTrainerSignup()
   return (
     <section id="resources" className="solutions">
       <div className="container">
@@ -33,7 +36,11 @@ export default function Solutions() {
                 Upload resources by department. Admin reviews every submission
                 before it is published, and will add pricing later.
               </p>
-              <a href="#signup" className="btn-small">Create Trainer Account</a>
+              <TrainerCTA
+                variant="small"
+                label="Create Trainer Account"
+                onSignupClick={() => openSignup('solutions')}
+              />
             </div>
           </div>
 

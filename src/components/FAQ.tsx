@@ -1,5 +1,6 @@
 ﻿import { useState } from 'react'
 import './FAQ.css'
+import { TRAINER_ONBOARDING } from '../config/trainerOnboarding'
 
 interface FAQItem {
   id: number
@@ -23,8 +24,8 @@ export default function FAQ() {
     },
     {
       id: 2,
-      question: 'How do Trainers upload resources?',
-      answer: 'Create a Trainer account, select your department, and upload your lesson plans, notes, and schemes of work. Admin reviews all submissions before publishing, and pricing will be added later by admin.'
+      question: TRAINER_ONBOARDING.faq.question,
+      answer: TRAINER_ONBOARDING.faq.answer
     },
     {
       id: 3,
