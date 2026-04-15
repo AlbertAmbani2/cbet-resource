@@ -1,9 +1,8 @@
 ﻿import './App.css'
 import Header from './components/Header'
 import Hero from './components/Hero'
-import UserPaths from './components/UserPaths'
 import HowItWorks from './components/HowItWorks'
-import Solutions from './components/Solutions'
+import ResourceBrowser from './components/ResourceBrowser'
 import TrainersHub from './components/TrainersHub'
 import FAQ from './components/FAQ'
 import Payment from './components/Payment'
@@ -18,9 +17,8 @@ function App() {
       <div className="relative z-10">
         <Header />
         <Hero />
-        <UserPaths />
+        <ResourceBrowser />
         <HowItWorks />
-        <Solutions />
         <TrainersHub />
         <Payment />
         <FAQ />

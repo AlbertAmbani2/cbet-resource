@@ -20,36 +20,35 @@ export default function Hero() {
       <div className="container">
         <div className="hero-content">
           <div className="hero-left">
-            <button className="badge">TVET Educational Excellence</button>
-            <h1 className="hero-title">Quality Resources,<br />Empowered Learning</h1>
+            <button className="badge">Find Verified Learning Materials</button>
+            <h1 className="hero-title">Find Quality CBET<br />Resources in Seconds</h1>
             <p className="hero-description">
-              cbet-resource empowers Trainers with department-based uploads and admin-reviewed
-              publishing for CBET-aligned resources in Kenya. Anyone can browse resources
-              without signing in.
+              Browse 30+ verified lesson plans, notes, and assessments from experienced educators.
+              Download PDFs for free and use them offline. No login required to get started.
             </p>
             <div className="hero-buttons">
-              <a href="#resources" className="btn-primary">Explore Resources</a>
+              <a href="#resources" className="btn-primary">Browse Now</a>
               <a href="#trainers-hub" className="btn-secondary">Become a Trainer</a>
             </div>
           </div>
 
           <div className="hero-right">
-            <img src="/images/hero-image.png" alt="Hero" className="hero-image" />
+            <img src="/images/hero-image.png" alt="Browse CBET Resources" className="hero-image" />
           </div>
         </div>
 
         <div className="stats-section">
           <div className="stat">
-            <div className="stat-value">100%</div>
-            <div className="stat-label">Secure & Verified</div>
+            <div className="stat-value">30+</div>
+            <div className="stat-label">Verified Resources</div>
           </div>
           <div className="stat">
-            <div className="stat-value">10k+ Resources</div>
-            <div className="stat-label">CBET-Aligned Materials</div>
+            <div className="stat-value">10+ Trainers</div>
+            <div className="stat-label">Expert Educators</div>
           </div>
           <div className="stat">
-            <div className="stat-value">Admin Reviewed</div>
-            <div className="stat-label">Resources Verified Before Publish</div>
+            <div className="stat-value">1-Day SLA</div>
+            <div className="stat-label">Resource Review Guarantee</div>
           </div>
         </div>
       </div>

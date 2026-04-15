@@ -1,0 +1,176 @@
+/**
+ * TrainerCTA Styling
+ * Variants: primary, secondary, small
+ */
+
+.trainer-cta-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* Base styles */
+.trainer-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+  position: relative;
+}
+
+.trainer-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.trainer-cta:focus {
+  outline: 2px solid #3b5bdb;
+  outline-offset: 2px;
+}
+
+.cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.cta-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Variant: Primary */
+.trainer-cta--primary {
+  padding: 14px 32px;
+  background: #3b5bdb;
+  color: white;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(59, 91, 219, 0.2);
+}
+
+.trainer-cta--primary:hover:not(:disabled) {
+  background: #2e46b8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(59, 91, 219, 0.3);
+}
+
+.trainer-cta--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.cta-description {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+/* Variant: Secondary */
+.trainer-cta--secondary {
+  padding: 10px 24px;
+  background: white;
+  color: #0f172a;
+  border: 2px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.trainer-cta--secondary:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.trainer-cta--secondary:active:not(:disabled) {
+  background: white;
+}
+
+/* Variant: Small */
+.trainer-cta--small {
+  padding: 8px 16px;
+  background: #3b5bdb;
+  color: white;
+  border: none;
+  font-size: 13px;
+}
+
+.trainer-cta--small:hover:not(:disabled) {
+  background: #2e46b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trainer-cta--primary {
+    padding: 12px 24px;
+    font-size: 14px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .trainer-cta--secondary {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .trainer-cta-wrapper {
+    width: 100%;
+  }
+
+  .trainer-cta--secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading state (future) */
+.trainer-cta.loading {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.trainer-cta.loading::after {
+  content: '';
+  animation: spin 1s linear infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* TrainerCTAGroup Layouts */
+.trainer-cta-group {
+  display: flex;
+  gap: 16px;
+}
+
+.trainer-cta-group--vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trainer-cta-group--horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .trainer-cta-group--horizontal {
+    flex-direction: column;
+  }
+}

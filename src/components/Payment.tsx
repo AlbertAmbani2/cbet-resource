@@ -1,17 +1,31 @@
-﻿import { Check, CheckCircle, Lock, Smartphone, User } from 'lucide-react'
+﻿import { Check, Zap, Star, BookmarkPlus } from 'lucide-react'
 import './Payment.css'
+import { useState } from 'react'
 
 export default function Payment() {
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (email) {
+      setSubmitted(true)
+      setEmail('')
+      setTimeout(() => setSubmitted(false), 3000)
+    }
+  }
+
   return (
-    <section id="signup" className="payment">
+    <section id="freemium" className="payment">
       <div className="container">
         <div className="payment-content">
           <div className="payment-left">
-            <h2>Localized Commerce,<br />Built for Kenya's<br />Educational Market</h2>
+            <span className="section-kicker">Coming Soon</span>
+            <h2>Free Forever,<br />Premium Optional</h2>
             <p>
-              Experience a secure checkout flow with M-Pesa Express (STK Push) integration
-              and traditional card payments. Admin-reviewed resources are published for
-              everyone to browse, with pricing added later by admin.
+              Browse, download, and use all resources offline for free. Premium unlocks advanced 
+              features coming soon like certificates, bookmarks, and batch downloads. Get notified 
+              when premium launches.
             </p>
 
             <div className="features-list">
@@ -19,52 +33,77 @@ export default function Payment() {
                 <div className="checkmark">
                   <Check aria-hidden="true" />
                 </div>
-                <span>M-Pesa Express STK Push for instant mobile payments</span>
+                <span>Browse 30+ verified resources</span>
               </div>
               <div className="feature">
                 <div className="checkmark">
                   <Check aria-hidden="true" />
                 </div>
-                <span>Bank-level encryption and transaction security</span>
+                <span>Download PDFs to work offline</span>
               </div>
               <div className="feature">
                 <div className="checkmark">
                   <Check aria-hidden="true" />
                 </div>
-                <span>Open browsing for everyone without signing in</span>
+                <span>No login required to start</span>
+              </div>
+              <div className="feature">
+                <div className="checkmark">
+                  <Zap aria-hidden="true" />
+                </div>
+                <span>Premium: Certificates (coming soon)</span>
+              </div>
+              <div className="feature">
+                <div className="checkmark">
+                  <BookmarkPlus aria-hidden="true" />
+                </div>
+                <span>Premium: Save & organize resources (coming soon)</span>
               </div>
             </div>
 
-            <a href="#signup" className="btn-start">Start Your Journey</a>
+            <form onSubmit={handleSubmit} className="email-form">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="email-input"
+              />
+              <button type="submit" className="btn-notify">
+                Notify Me
+              </button>
+              {submitted && <p className="submit-success">✓ We'll notify you soon!</p>}
+            </form>
           </div>
 
           <div className="payment-right">
-            <div className="payment-illustration">
-              <div className="character">
-                <User aria-hidden="true" />
+            <div className="freemium-comparison">
+              <div className="comparison-card free">
+                <div className="plan-label">Free</div>
+                <div className="plan-price">Always $0</div>
+                <ul className="plan-features">
+                  <li><Star size={16} /> Browse Resources</li>
+                  <li><Star size={16} /> Download PDFs</li>
+                  <li><Star size={16} /> Offline Access</li>
+                  <li><Star size={16} /> View Ratings</li>
+                  <li className="unavailable"><Star size={16} /> <s>Certificates</s></li>
+                  <li className="unavailable"><BookmarkPlus size={16} /> <s>Bookmarks</s></li>
+                </ul>
               </div>
-              <div className="payment-badge received">
-                <div className="badge-icon">
-                  <Lock aria-hidden="true" />
-                </div>
-                <div>
-                  <div className="badge-label">Verified</div>
-                  <div className="badge-amount">KES 2,500</div>
-                </div>
+
+              <div className="comparison-card premium">
+                <div className="plan-label premium-text">Premium</div>
+                <div className="plan-price">Coming Soon</div>
+                <ul className="plan-features">
+                  <li><Check size={16} /> Browse Resources</li>
+                  <li><Check size={16} /> Download PDFs</li>
+                  <li><Check size={16} /> Offline Access</li>
+                  <li><Check size={16} /> View Ratings</li>
+                  <li><Zap size={16} /> Certificates</li>
+                  <li><BookmarkPlus size={16} /> Save & Organize</li>
+                </ul>
               </div>
-              <div className="payment-badge success">
-                <div className="badge-icon">
-                  <CheckCircle aria-hidden="true" />
-                </div>
-                <div>
-                  <div className="badge-label">Resource Access Granted</div>
-                  <div className="badge-amount">Download Ready</div>
-                </div>
-              </div>
-              <div className="wallet-icon">
-                <Smartphone aria-hidden="true" />
-              </div>
-              <div className="tag-label">M-Pesa Ready</div>
             </div>
           </div>
         </div>

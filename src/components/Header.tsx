@@ -14,14 +14,13 @@ export default function Header() {
           </a>
           
           <nav className="nav-menu">
-            <a href="#paths">Start Here</a>
+            <a href="#resources">Browse Resources</a>
             <a href="#how-it-works">How It Works</a>
-            <a href="#resources">Resources</a>
             <a href="#trainers-hub">For Trainers</a>
-            <a href="#faq">About Us</a>
+            <a href="#faq">About</a>
           </nav>
 
-          <a href="#signup" className="btn-download">Get Started</a>
+          <a href="#signup" className="btn-download">Sign In</a>
         </div>
       </div>
     </header>
