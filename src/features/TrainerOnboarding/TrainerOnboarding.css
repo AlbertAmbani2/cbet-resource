@@ -312,3 +312,254 @@
     font-size: 13px;
   }
 }
+
+/* ============================================
+   MODAL STYLES
+   ============================================ */
+
+.trainer-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.trainer-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Progress */
+.modal-progress {
+  display: flex;
+  gap: 8px;
+  padding: 20px 24px;
+  background: #f8fafc;
+}
+
+.progress-step {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.progress-step.active {
+  background: #3b5bdb;
+}
+
+/* Modal Content */
+.modal-content {
+  padding: 24px;
+  min-height: 300px;
+}
+
+.modal-step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b5bdb;
+  box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.1);
+}
+
+.verification-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.verification-step p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* Modal Footer */
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.modal-footer button {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-footer .btn-primary {
+  background: #3b5bdb;
+  color: white;
+  border-color: #3b5bdb;
+}
+
+.modal-footer .btn-primary:hover:not(:disabled) {
+  background: #2d47a6;
+  border-color: #2d47a6;
+}
+
+.modal-footer .btn-secondary {
+  background: white;
+  color: #1e293b;
+}
+
+.modal-footer .btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.modal-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Modal */
+@media (max-width: 600px) {
+  .trainer-modal {
+    width: 95%;
+    max-height: calc(100vh - 40px);
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-content {
+    padding: 16px;
+    min-height: 250px;
+  }
+
+  .modal-footer {
+    padding: 16px;
+    gap: 8px;
+  }
+
+  .modal-footer button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}

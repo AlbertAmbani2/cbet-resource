@@ -81,7 +81,7 @@
 
 .btn-download {
   display: inline-block;
-  padding: 10px 24px;
+  padding: 10px 15px;
   background: transparent;
   border: 1px solid var(--text-secondary);
   color: var(--text-light);

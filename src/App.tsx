@@ -7,24 +7,28 @@ import TrainersHub from './components/TrainersHub'
 import FAQ from './components/FAQ'
 import Payment from './components/Payment'
 import Footer from './components/Footer'
-//import { SparklesCore } from './components/ui/sparkles'
+import { TrainerSignupProvider, TrainerSignupModal } from './features/TrainerOnboarding'
 
 function App() {
   return (
-    <div className="app relative w-full overflow-hidden">
+    <TrainerSignupProvider>
+      <div className="app relative w-full overflow-hidden">
+        {/* Global Modal */}
+        <TrainerSignupModal />
 
-      {/* Content wrapper */}
-      <div className="relative z-10">
-        <Header />
-        <Hero />
-        <ResourceBrowser />
-        <HowItWorks />
-        <TrainersHub />
-        <Payment />
-        <FAQ />
-        <Footer />
+        {/* Content wrapper */}
+        <div className="relative z-10">
+          <Header />
+          <Hero />
+          <ResourceBrowser />
+          <HowItWorks />
+          <TrainersHub />
+          <Payment />
+          <FAQ />
+          <Footer />
+        </div>
       </div>
-    </div>
+    </TrainerSignupProvider>
   )
 }
 

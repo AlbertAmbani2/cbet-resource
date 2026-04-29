@@ -7,6 +7,7 @@
 This project refactored 5 scattered "Create Trainer Account" implementations across the landing page into a clean, testable architecture.
 
 **Key Metrics:**
+
 - **Duplicate CTAs:** 5 → 1 (eliminated duplication)
 - **Time to change copy:** 5-10 min → 1 min
 - **Code testability:** Before (poor) → After (excellent)
@@ -84,13 +85,13 @@ Layer 4: Feature
 
 ### Before vs After
 
-| Aspect | Before | After |
-|--------|--------|-------|
-| **Duplicate Code** | 5 instances | 1 component |
-| **Copy Location** | Scattered in 5 files | 1 config file |
-| **Testability** | Can't test signup independently | Fully testable |
-| **Maintainability** | Hard to change | Easy to change |
-| **Reusability** | None (hardcoded) | Unlimited (DI pattern) |
+| Aspect              | Before                          | After                  |
+| ------------------- | ------------------------------- | ---------------------- |
+| **Duplicate Code**  | 5 instances                     | 1 component            |
+| **Copy Location**   | Scattered in 5 files            | 1 config file          |
+| **Testability**     | Can't test signup independently | Fully testable         |
+| **Maintainability** | Hard to change                  | Easy to change         |
+| **Reusability**     | None (hardcoded)                | Unlimited (DI pattern) |
 
 ## 🚀 Phase Status
 
@@ -144,6 +145,7 @@ FAQ.tsx         → Trainer account description (hardcoded)
 ```
 
 **Issues:**
+
 - Tight coupling (each owns signup behavior)
 - Code duplication (5 button implementations)
 - Poor maintainability (change copy = edit 5 files)
@@ -169,6 +171,7 @@ const { openSignup } = useTrainerSignup()
 ```
 
 **Benefits:**
+
 - ✅ One button, used everywhere (DRY)
 - ✅ Copy in one config file (change once, update everywhere)
 - ✅ State management isolated (easy to test)
@@ -248,55 +251,56 @@ Test examples provided in IMPLEMENTATION.md
 ### Simple Case: Use TrainerCTA
 
 ```tsx
-import TrainerCTA from './CTAs/TrainerCTA'
-import { useTrainerSignup } from '../features/TrainerOnboarding'
+import TrainerCTA from "./CTAs/TrainerCTA";
+import { useTrainerSignup } from "../features/TrainerOnboarding";
 
 export default function MyComponent() {
-  const { openSignup } = useTrainerSignup()
+  const { openSignup } = useTrainerSignup();
 
   return (
     <TrainerCTA
       variant="primary"
       label="Create Trainer Account"
-      onSignupClick={() => openSignup('my-component')}
+      onSignupClick={() => openSignup("my-component")}
     />
-  )
+  );
 }
 ```
 
 ### Advanced Case: Use TrainerOnboarding.Preview
 
 ```tsx
-import { TrainerOnboarding, useTrainerSignup } from '../features/TrainerOnboarding'
+import {
+  TrainerOnboarding,
+  useTrainerSignup,
+} from "../features/TrainerOnboarding";
 
 export default function MyPage() {
-  const { openSignup } = useTrainerSignup()
+  const { openSignup } = useTrainerSignup();
 
   return (
-    <TrainerOnboarding.Preview
-      onSignupClick={() => openSignup('my-page')}
-    />
-  )
+    <TrainerOnboarding.Preview onSignupClick={() => openSignup("my-page")} />
+  );
 }
 ```
 
 ### Access Config Values
 
 ```tsx
-import { TRAINER_ONBOARDING } from '../config/trainerOnboarding'
+import { TRAINER_ONBOARDING } from "../config/trainerOnboarding";
 
 // Use anywhere you need trainer copy
-const label = TRAINER_ONBOARDING.primaryCTA.label
-const steps = TRAINER_ONBOARDING.signupModal.steps
+const label = TRAINER_ONBOARDING.primaryCTA.label;
+const steps = TRAINER_ONBOARDING.signupModal.steps;
 ```
 
 ## 📚 Documentation Map
 
-| Document | Purpose | Read Time | Audience |
-|----------|---------|-----------|----------|
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Understand the design | 15 min | Everyone |
-| [DECISIONS.md](./docs/DECISIONS.md) | Learn why we chose each approach | 10 min | Tech leads, architects |
-| [IMPLEMENTATION.md](./docs/IMPLEMENTATION.md) | Step-by-step implementation guide | 30 min | Developers |
+| Document                                      | Purpose                           | Read Time | Audience               |
+| --------------------------------------------- | --------------------------------- | --------- | ---------------------- |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md)     | Understand the design             | 15 min    | Everyone               |
+| [DECISIONS.md](./docs/DECISIONS.md)           | Learn why we chose each approach  | 10 min    | Tech leads, architects |
+| [IMPLEMENTATION.md](./docs/IMPLEMENTATION.md) | Step-by-step implementation guide | 30 min    | Developers             |
 
 ## ✅ Checklist Before Phase 2
 

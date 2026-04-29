@@ -5,6 +5,7 @@ This document explains the key decisions made in the trainer onboarding refactor
 ## Executive Summary
 
 The refactor transforms 5 duplicate "Create Trainer Account" implementations into a clean, 4-layer architecture using:
+
 - **Centralized configuration** for copy/structure (single source of truth)
 - **Reusable components** with variants (presentation layer)
 - **Custom hooks** for state & logic (business logic layer)
@@ -29,15 +30,18 @@ export const TRAINER_ONBOARDING = {
 ```
 
 **Rationale:**
+
 - **Discoverable:** One canonical location for trainer copy
 - **Shared:** Used by Hero, TrainersHub, Solutions, FAQ — not owned by one feature
 - **Scalable:** Easy to A/B test or i18n (swap entire config)
 
 **Alternative Considered:** `src/features/TrainerOnboarding/config.ts`
+
 - **Why rejected:** Config is not feature-specific; it's referenced across multiple components
 - Top-level config more accurately reflects its role as "app-wide trainer copy"
 
 **Trade-off:** Single file might grow large
+
 - **Mitigation:** Monitor size. Split at 300 lines into `config/trainer/{cta.ts, form.ts, faq.ts}`
 
 ---
@@ -56,16 +60,18 @@ const {
   nextStep,
   prevStep,
   updateFormData,
-  submitForm
-} = useTrainerSignup()
+  submitForm,
+} = useTrainerSignup();
 ```
 
 **Rationale:**
+
 - **Cohesion:** All signup logic isolated in one hook
 - **Testability:** Easy to write unit tests for step transitions
 - **Reusability:** Same hook works in Hero, TrainersHub, Solutions
 
 **Alternative Considered:** Separate hooks per concern
+
 - `useSignupModal()` — modal visibility
 - `useSignupForm()` — form data
 - `useSignupNavigation()` — step progression
@@ -73,6 +79,7 @@ const {
 **Why rejected:** Over-engineering for current scope. Single hook is easier to understand and test.
 
 **Trade-off:** Hook could become "god hook" if not disciplined
+
 - **Mitigation:** Keep hook focused on signup only. Navigation and analytics via callbacks, not internal logic.
 
 ---
@@ -88,6 +95,7 @@ const {
 ```
 
 **Rationale:**
+
 - **DRY:** Single CSS file for all styling
 - **Maintenance:** 1 component to test vs 3
 - **Consistency:** Shared props ensure all variants behave the same
@@ -104,6 +112,7 @@ const {
 **Why rejected:** Over-engineering. Props are simpler than component multiplication.
 
 **Trade-off:** Variant system could explode to 10+ variants
+
 - **Mitigation:** Hard limit of 3-4 variants. If need 5+, split into separate components.
 - **Current Status:** At 3 variants, well within limit.
 
@@ -114,6 +123,7 @@ const {
 **✓ Chosen:** `src/features/TrainerOnboarding/hooks/useTrainerSignup.ts`
 
 **Rationale:**
+
 - **Ownership:** Hook is part of trainer onboarding feature
 - **Encapsulation:** Exported via feature's `index.ts` as public API
 - **Cohesion:** Related code (hook, component, CSS) live together
@@ -130,12 +140,11 @@ const {
 **✓ Chosen:** Components receive `onSignupClick` callback via props
 
 ```tsx
-<TrainerCTA
-  onSignupClick={() => openSignup('hero')}
-/>
+<TrainerCTA onSignupClick={() => openSignup("hero")} />
 ```
 
 **Rationale:**
+
 - **Loose Coupling:** Components know nothing about signup internals
 - **Reusability:** Same button works with different behaviors
 - **Testability:** Easy to mock `onSignupClick` in tests
@@ -151,6 +160,7 @@ const {
 **Why rejected:** Less flexible, harder to test, couples component to signup flow.
 
 **Trade-off:** Parent must pass callbacks
+
 - **Mitigation:** Very minor — developers understand callback pattern immediately.
 
 ---
@@ -160,6 +170,7 @@ const {
 ### Alternative: Redux / Context API for Global State
 
 **Why rejected:**
+
 - Overkill for current scope (single modal per page)
 - `useTrainerSignup()` hook is sufficient
 - Future: Add context if state sharing becomes complex
@@ -171,6 +182,7 @@ const {
 ### Alternative: Form Library (React Hook Form, Formik)
 
 **Why rejected:**
+
 - Trainer signup form is simple (4 steps, ~10 fields)
 - Custom hook solution is transparent and testable
 - No complex validation or error handling yet
@@ -227,6 +239,7 @@ Created all new files, changed nothing existing. Can migrate 1 component at a ti
 ### 5. Testability
 
 Each layer is independently testable:
+
 - `TrainerCTA.test.tsx` — variant rendering
 - `useTrainerSignup.test.ts` — state transitions
 - `config.test.ts` — structure validation
@@ -239,8 +252,8 @@ Each layer is independently testable:
 
 ```tsx
 const signup = useTrainerSignup();
-signup.openSignup();      // ✓ Clear
-signup.submitForm();      // ⚠️ Generic
+signup.openSignup(); // ✓ Clear
+signup.submitForm(); // ⚠️ Generic
 ```
 
 **Issue:** `submitForm()` is vague. Could apply to any form.
@@ -281,7 +294,7 @@ src/config/trainer/
 **Better:** Add validation:
 
 ```tsx
-if (!['primary', 'secondary', 'small'].includes(variant)) {
+if (!["primary", "secondary", "small"].includes(variant)) {
   console.warn(`Invalid variant: ${variant}`);
   return <TrainerCTA variant="primary" />;
 }
@@ -295,7 +308,7 @@ if (!['primary', 'secondary', 'small'].includes(variant)) {
 
 ```tsx
 const submitForm = useCallback(async () => {
-  closeSignup();  // ⚠️ Just closes modal, doesn't redirect
+  closeSignup(); // ⚠️ Just closes modal, doesn't redirect
 }, [closeSignup]);
 ```
 
@@ -305,8 +318,8 @@ const submitForm = useCallback(async () => {
 
 ```tsx
 useTrainerSignup({
-  onSuccess: () => navigate("/trainer/dashboard")
-})
+  onSuccess: () => navigate("/trainer/dashboard"),
+});
 ```
 
 **Current Status:** Acceptable for MVP. Add in Phase 2 when backend API ready.
@@ -386,9 +399,9 @@ track("trainer_signup_started", { source });
 useTrainerSignup()
   .openSignup()
   .submitForm()
-  .trackAnalytics()      // ← Shouldn't be here
-  .navigateToShop()      // ← Shouldn't be here
-  .sendWelcomeEmail();   // ← Shouldn't be here
+  .trackAnalytics() // ← Shouldn't be here
+  .navigateToShop() // ← Shouldn't be here
+  .sendWelcomeEmail(); // ← Shouldn't be here
 ```
 
 **Mitigation:** Keep hook focused. Analytics and navigation via callbacks:
@@ -397,10 +410,10 @@ useTrainerSignup()
 // ✓ GOOD: Hook own signup, parent handles side effects
 useTrainerSignup({
   onComplete: async (data) => {
-    await analytics.track('trainer_signup_complete', data);
-    navigate('/trainer/dashboard');
-  }
-})
+    await analytics.track("trainer_signup_complete", data);
+    navigate("/trainer/dashboard");
+  },
+});
 ```
 
 ---
@@ -412,7 +425,7 @@ useTrainerSignup({
 // They share same useTrainerSignup() state
 // Clicking Hero CTA then Solutions CTA resets form
 
-// Is this good or bad? 
+// Is this good or bad?
 // - Good: Form always resets (consistent UX)
 // - Bad: User might expect form to persist
 ```
@@ -497,13 +510,13 @@ Verdict: Slight increase in bundle size, but justified by:
 
 Decisions are stable and unlikely to change unless:
 
-| Decision | Stability | Reconsider If | Plan |
-|----------|-----------|--------------|------|
-| Centralized config | ✅ High | Copy becomes 1000+ lines | Split: cta/form/faq |
-| Single signup hook | ✅ High | 5+ signup types needed | Create hook factory |
-| Variant system | ✅ High | 5+ variants needed | Split into components |
-| Feature folder location | ✅ High | Trainer feature added to 20+ pages | Keep as feature, not move to shared |
-| DI pattern | ✅ Very High | Team strongly prefers Redux | Consider gradually |
+| Decision                | Stability    | Reconsider If                      | Plan                                |
+| ----------------------- | ------------ | ---------------------------------- | ----------------------------------- |
+| Centralized config      | ✅ High      | Copy becomes 1000+ lines           | Split: cta/form/faq                 |
+| Single signup hook      | ✅ High      | 5+ signup types needed             | Create hook factory                 |
+| Variant system          | ✅ High      | 5+ variants needed                 | Split into components               |
+| Feature folder location | ✅ High      | Trainer feature added to 20+ pages | Keep as feature, not move to shared |
+| DI pattern              | ✅ Very High | Team strongly prefers Redux        | Consider gradually                  |
 
 ---
 

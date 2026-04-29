@@ -34,6 +34,7 @@ Refactor 5 landing page components to use new infrastructure. Each can be done i
 ### 2.1 Hero.tsx — Trainer CTA (Secondary)
 
 **Current Problem:**
+
 ```tsx
 // ❌ Hardcoded button
 <a href="#signup" className="btn-secondary">
@@ -42,29 +43,31 @@ Refactor 5 landing page components to use new infrastructure. Each can be done i
 ```
 
 **Refactored Solution:**
+
 ```tsx
-import TrainerCTA from './CTAs/TrainerCTA'
-import { useTrainerSignup } from '../features/TrainerOnboarding'
+import TrainerCTA from "./CTAs/TrainerCTA";
+import { useTrainerSignup } from "../features/TrainerOnboarding";
 
 export default function Hero() {
-  const { openSignup } = useTrainerSignup()
+  const { openSignup } = useTrainerSignup();
 
   return (
     <section className="hero">
       <h1>Share Your Knowledge</h1>
       <p>Turn training into impact</p>
-      
+
       <TrainerCTA
         variant="secondary"
         label="Become a Trainer"
-        onSignupClick={() => openSignup('hero')}
+        onSignupClick={() => openSignup("hero")}
       />
     </section>
-  )
+  );
 }
 ```
 
-**Changes:** 
+**Changes:**
+
 - Add imports (2 lines)
 - Extract `useTrainerSignup()` (1 line)
 - Replace button with `<TrainerCTA />` (5 lines)
@@ -73,6 +76,7 @@ export default function Hero() {
 **Time:** 5 minutes
 
 **Testing:**
+
 ```bash
 # Dev: npm run dev → Click "Become a Trainer" → Modal opens ✓
 # Component renders button ✓
@@ -84,39 +88,40 @@ export default function Hero() {
 ### 2.2 Solutions.tsx — Trainer CTA (Small)
 
 **Current Problem:**
+
 ```tsx
 // ❌ Hardcoded button in footer-like section
-<button className="call-out">
-  Create Trainer Account
-</button>
+<button className="call-out">Create Trainer Account</button>
 ```
 
 **Refactored Solution:**
+
 ```tsx
-import TrainerCTA from './CTAs/TrainerCTA'
-import { useTrainerSignup } from '../features/TrainerOnboarding'
+import TrainerCTA from "./CTAs/TrainerCTA";
+import { useTrainerSignup } from "../features/TrainerOnboarding";
 
 export default function Solutions() {
-  const { openSignup } = useTrainerSignup()
+  const { openSignup } = useTrainerSignup();
 
   return (
     <section className="solutions">
       {/* ... solutions grid ... */}
-      
+
       <div className="solutions-cta">
         <h3>Ready to teach?</h3>
         <TrainerCTA
           variant="small"
           label="Create Trainer Account"
-          onSignupClick={() => openSignup('solutions')}
+          onSignupClick={() => openSignup("solutions")}
         />
       </div>
     </section>
-  )
+  );
 }
 ```
 
 **Changes:**
+
 - Add imports (2 lines)
 - Extract `useTrainerSignup()` (1 line)
 - Replace button with `<TrainerCTA variant="small" />` (5 lines)
@@ -125,6 +130,7 @@ export default function Solutions() {
 **Time:** 5 minutes
 
 **Testing:**
+
 ```bash
 # Dev: npm run dev → Click "Create Trainer Account" → Modal opens ✓
 # Modal uses same state as Hero (form resets) ✓
@@ -135,6 +141,7 @@ export default function Solutions() {
 ### 2.3 TrainersHub.tsx — Trainer Onboarding Preview
 
 **Current Problem:**
+
 ```tsx
 // ❌ Full signup preview hardcoded in component
 <section className="trainers-hub">
@@ -146,25 +153,30 @@ export default function Solutions() {
 ```
 
 **Refactored Solution:**
+
 ```tsx
-import { TrainerOnboarding, useTrainerSignup } from '../features/TrainerOnboarding'
+import {
+  TrainerOnboarding,
+  useTrainerSignup,
+} from "../features/TrainerOnboarding";
 
 export default function TrainersHub() {
-  const { openSignup } = useTrainerSignup()
+  const { openSignup } = useTrainerSignup();
 
   return (
     <div className="trainers-hub">
       <TrainerOnboarding.Preview
-        onSignupClick={() => openSignup('trainers-hub')}
+        onSignupClick={() => openSignup("trainers-hub")}
       />
-      
+
       {/* Additional TrainersHub-specific content can live here */}
     </div>
-  )
+  );
 }
 ```
 
 **What Happens:**
+
 - `TrainerOnboarding.Preview` renders:
   - "Turn Training Into Impact" title
   - Trainer benefits list (from config)
@@ -174,6 +186,7 @@ export default function TrainersHub() {
 - Both CTAs use the same `openSignup()` callback
 
 **Changes:**
+
 - Replace entire trainer section with `<TrainerOnboarding.Preview />`
 - Remove all hardcoded trainer copy/buttons
 - Remove TrainerOnboarding-specific CSS from TrainersHub.css
@@ -181,6 +194,7 @@ export default function TrainersHub() {
 **Time:** 10 minutes
 
 **Testing:**
+
 ```bash
 # Dev: npm run dev → Check TrainersHub → Trainer preview renders ✓
 # Click "Create Trainer Account" → Modal opens with email step ✓
@@ -193,31 +207,34 @@ export default function TrainersHub() {
 ### 2.4 FAQ.tsx — Trainer FAQ Reference
 
 **Current Problem:**
+
 ```tsx
 // ❌ Trainer FAQ hardcoded
 const FAQS = [
   {
-    question: 'How do I become a trainer?',
-    answer: 'Click Create Trainer Account and fill out your profile...'
+    question: "How do I become a trainer?",
+    answer: "Click Create Trainer Account and fill out your profile...",
   },
   // ... more FAQs ...
-]
+];
 ```
 
 **Refactored Solution:**
+
 ```tsx
-import { TRAINER_ONBOARDING } from '../config/trainerOnboarding'
+import { TRAINER_ONBOARDING } from "../config/trainerOnboarding";
 
 const FAQS = [
   {
     question: TRAINER_ONBOARDING.faq.question,
-    answer: TRAINER_ONBOARDING.faq.answer
+    answer: TRAINER_ONBOARDING.faq.answer,
   },
   // ... other FAQs ...
-]
+];
 ```
 
 **Changes:**
+
 - Add import (1 line)
 - Replace hardcoded copy with config references (2 lines)
 - Remove old trainer FAQ question/answer
@@ -225,6 +242,7 @@ const FAQS = [
 **Time:** 3 minutes
 
 **Testing:**
+
 ```bash
 # Dev: npm run dev → FAQ page → Trainer FAQ shows ✓
 # Copy matches trainerOnboarding.ts config ✓
@@ -235,6 +253,7 @@ const FAQS = [
 ### 2.5 UserPaths.tsx — REMOVE (Role Absorbed)
 
 **Current Problem:**
+
 ```
 UserPaths.tsx has "Create Trainer Account" section
 (now handled by TrainersHub.tsx via TrainerOnboarding.Preview)
@@ -243,6 +262,7 @@ UserPaths.tsx has "Create Trainer Account" section
 **Solution:** Delete `src/components/UserPaths.tsx` and remove from imports
 
 **Changes to Other Files:**
+
 ```tsx
 // In App.tsx or wherever UserPaths is imported
 import UserPaths from './components/UserPaths'  // ❌ Remove this
@@ -252,6 +272,7 @@ import UserPaths from './components/UserPaths'  // ❌ Remove this
 ```
 
 **Impact:**
+
 - No breaking changes (UserPaths was just duplicating TrainersHub content)
 - Cleaner codebase
 - One less component to maintain
@@ -259,6 +280,7 @@ import UserPaths from './components/UserPaths'  // ❌ Remove this
 **Time:** 2 minutes
 
 **Testing:**
+
 ```bash
 # Verify app still loads ✓
 # No broken imports ✓
@@ -305,12 +327,12 @@ const { openSignup } = useTrainerSignup()
 ### Reference Trainer Config
 
 ```tsx
-import { TRAINER_ONBOARDING } from '../config/trainerOnboarding'
+import { TRAINER_ONBOARDING } from "../config/trainerOnboarding";
 
 // Access any config value
-const label = TRAINER_ONBOARDING.primaryCTA.label
-const steps = TRAINER_ONBOARDING.signupModal.steps
-const faqQuestion = TRAINER_ONBOARDING.faq.question
+const label = TRAINER_ONBOARDING.primaryCTA.label;
+const steps = TRAINER_ONBOARDING.signupModal.steps;
+const faqQuestion = TRAINER_ONBOARDING.faq.question;
 ```
 
 ---
@@ -324,49 +346,41 @@ const faqQuestion = TRAINER_ONBOARDING.faq.question
 ```tsx
 // src/components/CTAs/__tests__/TrainerCTA.test.tsx
 
-describe('TrainerCTA', () => {
-  it('renders with correct variant styles', () => {
+describe("TrainerCTA", () => {
+  it("renders with correct variant styles", () => {
     const { container } = render(
-      <TrainerCTA variant="primary" onSignupClick={() => {}} />
-    )
-    expect(container.querySelector('.trainer-cta-primary')).toBeInTheDocument()
-  })
+      <TrainerCTA variant="primary" onSignupClick={() => {}} />,
+    );
+    expect(container.querySelector(".trainer-cta-primary")).toBeInTheDocument();
+  });
 
-  it('calls onSignupClick when clicked', () => {
-    const handleClick = jest.fn()
+  it("calls onSignupClick when clicked", () => {
+    const handleClick = jest.fn();
     const { getByRole } = render(
-      <TrainerCTA
-        variant="primary"
-        label="Test"
-        onSignupClick={handleClick}
-      />
-    )
-    fireEvent.click(getByRole('button'))
-    expect(handleClick).toHaveBeenCalled()
-  })
+      <TrainerCTA variant="primary" label="Test" onSignupClick={handleClick} />,
+    );
+    fireEvent.click(getByRole("button"));
+    expect(handleClick).toHaveBeenCalled();
+  });
 
-  it('applies custom label', () => {
+  it("applies custom label", () => {
     const { getByText } = render(
       <TrainerCTA
         variant="primary"
         label="Custom Label"
         onSignupClick={() => {}}
-      />
-    )
-    expect(getByText('Custom Label')).toBeInTheDocument()
-  })
+      />,
+    );
+    expect(getByText("Custom Label")).toBeInTheDocument();
+  });
 
-  it('disables button when disabled prop is true', () => {
+  it("disables button when disabled prop is true", () => {
     const { getByRole } = render(
-      <TrainerCTA
-        variant="primary"
-        onSignupClick={() => {}}
-        disabled
-      />
-    )
-    expect(getByRole('button')).toBeDisabled()
-  })
-})
+      <TrainerCTA variant="primary" onSignupClick={() => {}} disabled />,
+    );
+    expect(getByRole("button")).toBeDisabled();
+  });
+});
 ```
 
 #### useTrainerSignup Hook Tests
@@ -374,55 +388,55 @@ describe('TrainerCTA', () => {
 ```tsx
 // src/features/TrainerOnboarding/__tests__/hooks/useTrainerSignup.test.ts
 
-describe('useTrainerSignup', () => {
-  it('initializes with modal closed', () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    expect(result.current.isOpen).toBe(false)
-  })
+describe("useTrainerSignup", () => {
+  it("initializes with modal closed", () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    expect(result.current.isOpen).toBe(false);
+  });
 
-  it('opens modal on openSignup()', () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    act(() => result.current.openSignup('test-source'))
-    expect(result.current.isOpen).toBe(true)
-  })
+  it("opens modal on openSignup()", () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    act(() => result.current.openSignup("test-source"));
+    expect(result.current.isOpen).toBe(true);
+  });
 
-  it('closes modal on closeSignup()', () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    act(() => result.current.openSignup())
-    act(() => result.current.closeSignup())
-    expect(result.current.isOpen).toBe(false)
-  })
+  it("closes modal on closeSignup()", () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    act(() => result.current.openSignup());
+    act(() => result.current.closeSignup());
+    expect(result.current.isOpen).toBe(false);
+  });
 
-  it('progresses through form steps', () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    act(() => result.current.openSignup())
-    expect(result.current.currentStep).toBe(0)
-    
-    act(() => result.current.nextStep())
-    expect(result.current.currentStep).toBe(1)
-    
-    act(() => result.current.nextStep())
-    expect(result.current.currentStep).toBe(2)
-    
-    act(() => result.current.prevStep())
-    expect(result.current.currentStep).toBe(1)
-  })
+  it("progresses through form steps", () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    act(() => result.current.openSignup());
+    expect(result.current.currentStep).toBe(0);
 
-  it('updates form data', () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    act(() => result.current.updateFormData('email', 'test@example.com'))
-    expect(result.current.formData.email).toBe('test@example.com')
-  })
+    act(() => result.current.nextStep());
+    expect(result.current.currentStep).toBe(1);
 
-  it('submits form with complete data', async () => {
-    const { result } = renderHook(() => useTrainerSignup())
-    act(() => result.current.openSignup())
-    act(() => result.current.updateFormData('email', 'test@example.com'))
-    
-    const submitPromise = act(() => result.current.submitForm())
-    expect(result.current.isOpen).toBe(false) // Closes after submit
-  })
-})
+    act(() => result.current.nextStep());
+    expect(result.current.currentStep).toBe(2);
+
+    act(() => result.current.prevStep());
+    expect(result.current.currentStep).toBe(1);
+  });
+
+  it("updates form data", () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    act(() => result.current.updateFormData("email", "test@example.com"));
+    expect(result.current.formData.email).toBe("test@example.com");
+  });
+
+  it("submits form with complete data", async () => {
+    const { result } = renderHook(() => useTrainerSignup());
+    act(() => result.current.openSignup());
+    act(() => result.current.updateFormData("email", "test@example.com"));
+
+    const submitPromise = act(() => result.current.submitForm());
+    expect(result.current.isOpen).toBe(false); // Closes after submit
+  });
+});
 ```
 
 #### Config Tests
@@ -430,24 +444,24 @@ describe('useTrainerSignup', () => {
 ```tsx
 // src/config/__tests__/trainerOnboarding.test.ts
 
-describe('TrainerOnboarding Config', () => {
-  it('has all required properties', () => {
-    expect(TRAINER_ONBOARDING).toHaveProperty('primaryCTA')
-    expect(TRAINER_ONBOARDING).toHaveProperty('signupModal')
-    expect(TRAINER_ONBOARDING).toHaveProperty('faq')
-  })
+describe("TrainerOnboarding Config", () => {
+  it("has all required properties", () => {
+    expect(TRAINER_ONBOARDING).toHaveProperty("primaryCTA");
+    expect(TRAINER_ONBOARDING).toHaveProperty("signupModal");
+    expect(TRAINER_ONBOARDING).toHaveProperty("faq");
+  });
 
-  it('primaryCTA has label and description', () => {
-    expect(TRAINER_ONBOARDING.primaryCTA).toHaveProperty('label')
-    expect(TRAINER_ONBOARDING.primaryCTA).toHaveProperty('description')
-    expect(TRAINER_ONBOARDING.primaryCTA.label).toBeTruthy()
-    expect(TRAINER_ONBOARDING.primaryCTA.description).toBeTruthy()
-  })
+  it("primaryCTA has label and description", () => {
+    expect(TRAINER_ONBOARDING.primaryCTA).toHaveProperty("label");
+    expect(TRAINER_ONBOARDING.primaryCTA).toHaveProperty("description");
+    expect(TRAINER_ONBOARDING.primaryCTA.label).toBeTruthy();
+    expect(TRAINER_ONBOARDING.primaryCTA.description).toBeTruthy();
+  });
 
-  it('form steps match expected count', () => {
-    expect(TRAINER_ONBOARDING.signupModal.steps.length).toBe(4)
-  })
-})
+  it("form steps match expected count", () => {
+    expect(TRAINER_ONBOARDING.signupModal.steps.length).toBe(4);
+  });
+});
 ```
 
 ### Integration Tests
@@ -455,72 +469,72 @@ describe('TrainerOnboarding Config', () => {
 #### Hero + TrainerCTA
 
 ```tsx
-describe('Hero with TrainerCTA', () => {
-  it('opens signup modal when CTA is clicked', () => {
-    const { getByText, getByRole } = render(<Hero />)
-    const button = getByText('Become a Trainer')
-    
-    fireEvent.click(button)
-    
+describe("Hero with TrainerCTA", () => {
+  it("opens signup modal when CTA is clicked", () => {
+    const { getByText, getByRole } = render(<Hero />);
+    const button = getByText("Become a Trainer");
+
+    fireEvent.click(button);
+
     // Modal should appear
-    expect(getByRole('dialog')).toBeInTheDocument()
-  })
-})
+    expect(getByRole("dialog")).toBeInTheDocument();
+  });
+});
 ```
 
 #### TrainersHub + TrainerOnboarding.Preview
 
 ```tsx
-describe('TrainersHub with TrainerOnboarding.Preview', () => {
-  it('displays trainer benefits from config', () => {
-    const { getByText } = render(<TrainersHub />)
-    
-    // Should show config title
-    expect(getByText('Turn Training Into Impact')).toBeInTheDocument()
-    
-    // Should show primary CTA
-    expect(getByText(TRAINER_ONBOARDING.primaryCTA.label)).toBeInTheDocument()
-  })
+describe("TrainersHub with TrainerOnboarding.Preview", () => {
+  it("displays trainer benefits from config", () => {
+    const { getByText } = render(<TrainersHub />);
 
-  it('opens signup when Create Account is clicked', () => {
-    const { getByText, getByRole } = render(<TrainersHub />)
-    fireEvent.click(getByText(TRAINER_ONBOARDING.primaryCTA.label))
-    expect(getByRole('dialog')).toBeInTheDocument()
-  })
-})
+    // Should show config title
+    expect(getByText("Turn Training Into Impact")).toBeInTheDocument();
+
+    // Should show primary CTA
+    expect(getByText(TRAINER_ONBOARDING.primaryCTA.label)).toBeInTheDocument();
+  });
+
+  it("opens signup when Create Account is clicked", () => {
+    const { getByText, getByRole } = render(<TrainersHub />);
+    fireEvent.click(getByText(TRAINER_ONBOARDING.primaryCTA.label));
+    expect(getByRole("dialog")).toBeInTheDocument();
+  });
+});
 ```
 
 ### E2E Tests (Phase 3)
 
 ```tsx
-describe('Trainer Signup E2E', () => {
-  it('completes full signup flow', async () => {
-    cy.visit('/'); // Load landing page
-    cy.contains('Create Trainer Account').click(); // Click CTA
-    
+describe("Trainer Signup E2E", () => {
+  it("completes full signup flow", async () => {
+    cy.visit("/"); // Load landing page
+    cy.contains("Create Trainer Account").click(); // Click CTA
+
     // Step 0: Email
-    cy.get('input[name="email"]').type('trainer@example.com');
-    cy.get('input[name="password"]').type('SecurePassword123');
-    cy.contains('Next').click();
-    
+    cy.get('input[name="email"]').type("trainer@example.com");
+    cy.get('input[name="password"]').type("SecurePassword123");
+    cy.contains("Next").click();
+
     // Step 1: Profile
-    cy.get('input[name="fullName"]').type('John Trainer');
-    cy.contains('Next').click();
-    
+    cy.get('input[name="fullName"]').type("John Trainer");
+    cy.contains("Next").click();
+
     // Step 2: Department
-    cy.get('select[name="department"]').select('Engineering');
-    cy.contains('Next').click();
-    
+    cy.get('select[name="department"]').select("Engineering");
+    cy.contains("Next").click();
+
     // Step 3: Review
-    cy.contains('trainer@example.com').should('be.visible');
-    cy.contains('John Trainer').should('be.visible');
-    cy.contains('Engineering').should('be.visible');
-    cy.contains('Create Account').click();
-    
+    cy.contains("trainer@example.com").should("be.visible");
+    cy.contains("John Trainer").should("be.visible");
+    cy.contains("Engineering").should("be.visible");
+    cy.contains("Create Account").click();
+
     // Success (Phase 2)
-    cy.contains('Welcome, John!').should('be.visible');
-  })
-})
+    cy.contains("Welcome, John!").should("be.visible");
+  });
+});
 ```
 
 ---
@@ -608,35 +622,35 @@ ls -lh dist/assets/
 
 ## Success Criteria
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| **Duplicate CTAs eliminated** | 5 → 1 | ✅ |
-| **Files touching trainer copy** | 5 → 1 | After Phase 2 |
-| **Time to change CTA copy** | 5-10min → 1min | After Phase 2 |
-| **Signup testable independently** | No → Yes | After Phase 2 |
-| **Trainer messaging consistency** | Medium → High | After Phase 2 |
-| **Bundle size** | +4KB justified | After Phase 2 |
-| **Build succeeds** | - | ✅ |
-| **No breaking changes** | - | ✅ |
+| Metric                            | Target         | Status        |
+| --------------------------------- | -------------- | ------------- |
+| **Duplicate CTAs eliminated**     | 5 → 1          | ✅            |
+| **Files touching trainer copy**   | 5 → 1          | After Phase 2 |
+| **Time to change CTA copy**       | 5-10min → 1min | After Phase 2 |
+| **Signup testable independently** | No → Yes       | After Phase 2 |
+| **Trainer messaging consistency** | Medium → High  | After Phase 2 |
+| **Bundle size**                   | +4KB justified | After Phase 2 |
+| **Build succeeds**                | -              | ✅            |
+| **No breaking changes**           | -              | ✅            |
 
 ---
 
 ## Timeline Estimate
 
-| Phase | Task | Time | Status |
-|-------|------|------|--------|
-| 1 | Create foundation files | - | ✅ Complete |
-| 2 | Refactor Hero.tsx | 5 min | ⏳ Ready |
-| 2 | Refactor Solutions.tsx | 5 min | ⏳ Ready |
-| 2 | Refactor TrainersHub.tsx | 10 min | ⏳ Ready |
-| 2 | Refactor FAQ.tsx | 3 min | ⏳ Ready |
-| 2 | Delete UserPaths.tsx | 2 min | ⏳ Ready |
-| 2 | Testing & debugging | 1-2 hours | ⏳ Ready |
-| **2 Total** | **Phase 2 Complete** | **4-6 hours** | ⏳ Ready |
-| 3 | Unit test suite | 1-2 hours | 📅 Next |
-| 3 | E2E test suite | 1 hour | 📅 Next |
-| 3 | Accessibility audit | 1 hour | 📅 Next |
-| **3 Total** | **Phase 3 Complete** | **2-3 hours** | 📅 Next |
+| Phase       | Task                     | Time          | Status      |
+| ----------- | ------------------------ | ------------- | ----------- |
+| 1           | Create foundation files  | -             | ✅ Complete |
+| 2           | Refactor Hero.tsx        | 5 min         | ⏳ Ready    |
+| 2           | Refactor Solutions.tsx   | 5 min         | ⏳ Ready    |
+| 2           | Refactor TrainersHub.tsx | 10 min        | ⏳ Ready    |
+| 2           | Refactor FAQ.tsx         | 3 min         | ⏳ Ready    |
+| 2           | Delete UserPaths.tsx     | 2 min         | ⏳ Ready    |
+| 2           | Testing & debugging      | 1-2 hours     | ⏳ Ready    |
+| **2 Total** | **Phase 2 Complete**     | **4-6 hours** | ⏳ Ready    |
+| 3           | Unit test suite          | 1-2 hours     | 📅 Next     |
+| 3           | E2E test suite           | 1 hour        | 📅 Next     |
+| 3           | Accessibility audit      | 1 hour        | 📅 Next     |
+| **3 Total** | **Phase 3 Complete**     | **2-3 hours** | 📅 Next     |
 
 ---
 

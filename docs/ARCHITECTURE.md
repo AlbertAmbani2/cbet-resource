@@ -35,12 +35,12 @@ src/
 
 ### The Four Layers
 
-| Layer            | Responsibility                      | File                                        | Why This Matters                              |
-|------------------|-------------------------------------|---------------------------------------------|-----------------------------------------------|
-| **Config**       | Copy, form fields, constants        | `config/trainerOnboarding.ts`                | Single source of truth → change once, update everywhere |
-| **Logic**        | State management, form progression  | `features/TrainerOnboarding/hooks/useTrainerSignup.ts` | Testable, reusable, isolated from rendering   |
-| **Presentation** | Button UI & styling, zero logic     | `components/CTAs/TrainerCTA.tsx`            | Truly dumb component = flexible use cases    |
-| **Feature**      | Trainer-specific UI composition     | `features/TrainerOnboarding/TrainerOnboarding.tsx` | Cohesive domain logic in one place           |
+| Layer            | Responsibility                     | File                                                   | Why This Matters                                        |
+| ---------------- | ---------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| **Config**       | Copy, form fields, constants       | `config/trainerOnboarding.ts`                          | Single source of truth → change once, update everywhere |
+| **Logic**        | State management, form progression | `features/TrainerOnboarding/hooks/useTrainerSignup.ts` | Testable, reusable, isolated from rendering             |
+| **Presentation** | Button UI & styling, zero logic    | `components/CTAs/TrainerCTA.tsx`                       | Truly dumb component = flexible use cases               |
+| **Feature**      | Trainer-specific UI composition    | `features/TrainerOnboarding/TrainerOnboarding.tsx`     | Cohesive domain logic in one place                      |
 
 ## Key Architectural Principles
 
@@ -63,7 +63,7 @@ Components don't know about signup behavior. Parent provides it via props:
 <TrainerCTA
   variant="primary"
   label="Create Trainer Account"
-  onSignupClick={() => openSignup('hero')}  // ← DI: parent controls behavior
+  onSignupClick={() => openSignup("hero")} // ← DI: parent controls behavior
 />
 ```
 
@@ -181,11 +181,11 @@ No circular imports. Clear separation.
 ```tsx
 // Example: How Hero.tsx uses the architecture
 
-import TrainerCTA from './CTAs/TrainerCTA'
-import { useTrainerSignup } from '../features/TrainerOnboarding'
+import TrainerCTA from "./CTAs/TrainerCTA";
+import { useTrainerSignup } from "../features/TrainerOnboarding";
 
 export function Hero() {
-  const { openSignup } = useTrainerSignup()  // ← Get signup function
+  const { openSignup } = useTrainerSignup(); // ← Get signup function
 
   return (
     <section>
@@ -195,15 +195,16 @@ export function Hero() {
       {/* ← Reusable component, custom behavior via DI */}
       <TrainerCTA
         variant="secondary"
-        label="Become a Trainer"           // ← Can come from config
-        onSignupClick={() => openSignup('hero')}  // ← Custom behavior
+        label="Become a Trainer" // ← Can come from config
+        onSignupClick={() => openSignup("hero")} // ← Custom behavior
       />
     </section>
-  )
+  );
 }
 ```
 
 **Why this works:**
+
 1. `useTrainerSignup()` manages signup state (single instance per page)
 2. `openSignup()` callback from hook
 3. `<TrainerCTA />` never knows about signup — just calls callback
@@ -307,50 +308,57 @@ useTrainerSignup Hook (single instance per page)
 
 ## Benefits Matrix
 
-| Issue                     | Before | After | How                                          |
-|---------------------------|--------|-------|----------------------------------------------|
-| **Duplicate Copy**        | 5      | 1     | Centralized `trainerOnboarding.ts`          |
-| **CTA Implementations**   | 5      | 1     | Single `TrainerCTA.tsx` with variants       |
-| **Signup State Locations** | 5      | 1     | Centralized `useTrainerSignup()` hook       |
-| **Time to Change Copy**   | 5 min  | 1 min | Edit 1 config file vs 5 components         |
-| **Testing Signup Logic**  | Hard   | Easy  | Isolated hook = unit testable              |
-| **Consistency Risk**      | High   | Low   | Single source of truth guarantees consistency |
-| **Code Reusability**      | None   | High  | `TrainerCTA` works everywhere with DI      |
-| **Coupling**              | Tight  | Loose | Dependencies via interfaces (props)        |
-| **Maintainability**       | Hard   | Easy  | Single responsibility per file             |
+| Issue                      | Before | After | How                                           |
+| -------------------------- | ------ | ----- | --------------------------------------------- |
+| **Duplicate Copy**         | 5      | 1     | Centralized `trainerOnboarding.ts`            |
+| **CTA Implementations**    | 5      | 1     | Single `TrainerCTA.tsx` with variants         |
+| **Signup State Locations** | 5      | 1     | Centralized `useTrainerSignup()` hook         |
+| **Time to Change Copy**    | 5 min  | 1 min | Edit 1 config file vs 5 components            |
+| **Testing Signup Logic**   | Hard   | Easy  | Isolated hook = unit testable                 |
+| **Consistency Risk**       | High   | Low   | Single source of truth guarantees consistency |
+| **Code Reusability**       | None   | High  | `TrainerCTA` works everywhere with DI         |
+| **Coupling**               | Tight  | Loose | Dependencies via interfaces (props)           |
+| **Maintainability**        | Hard   | Easy  | Single responsibility per file                |
 
 ## Variant System
 
 The `TrainerCTA` component supports 3 semantic variants:
 
 ### Primary Variant
+
 ```tsx
 <TrainerCTA variant="primary" />
 ```
+
 - Large button with full branding
 - Used in TrainersHub as main CTA
 - Features list included
 - Color: #3b5bdb (brand blue)
 
 ### Secondary Variant
+
 ```tsx
 <TrainerCTA variant="secondary" />
 ```
+
 - Medium button with border
 - Used in Hero as alternate action
 - Emphasizes "try learning first, trainer later"
 - Color: white background, blue border
 
 ### Small Variant
+
 ```tsx
 <TrainerCTA variant="small" />
 ```
+
 - Compact inline button
 - Used in Solutions, footer
 - Fits tight spaces
 - Color: gray or blue (context-dependent)
 
 All variants support:
+
 - Custom labels via `label` prop
 - Custom behavior via `onSignupClick` callback (DI)
 - Disabled state for loading
@@ -359,6 +367,7 @@ All variants support:
 ## Migration Strategy
 
 ### Phase 1: Foundation (No Breaking Changes)
+
 - ✅ Create `config/trainerOnboarding.ts`
 - ✅ Create `useTrainerSignup.ts`
 - ✅ Create `TrainerCTA.tsx` + CSS
@@ -366,6 +375,7 @@ All variants support:
 - All new files — existing code untouched
 
 ### Phase 2: Refactor Components
+
 - Update Hero.tsx to use `TrainerCTA`
 - Update TrainersHub.tsx to use `TrainerOnboarding.Preview`
 - Update Solutions.tsx to use `TrainerCTA`
@@ -374,6 +384,7 @@ All variants support:
 - All changes are local to each component
 
 ### Phase 3: Cleanup & Testing
+
 - Add unit tests for `TrainerCTA`, `useTrainerSignup`, config
 - Add integration tests for component + hook
 - Add E2E test for full signup flow

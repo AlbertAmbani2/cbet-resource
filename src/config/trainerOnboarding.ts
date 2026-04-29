@@ -63,10 +63,9 @@ export const TRAINER_ONBOARDING: TrainerOnboardingConfig = {
  * Used by useTrainerSignup hook
  */
 export const TRAINER_SIGNUP_FLOW = {
-  steps: ['email', 'password', 'profile', 'department', 'verification'] as const,
+  steps: ['account', 'profile', 'department', 'verification'] as const,
   stepLabels: {
-    email: 'Email & Password',
-    password: 'Secure Password',
+    account: 'Email & Password',
     profile: 'Your Profile',
     department: 'Choose Department',
     verification: 'Verify Account'

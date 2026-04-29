@@ -92,7 +92,7 @@ TrainerOnboarding.Form = function TrainerOnboardingForm() {
 
       {/* Form content */}
       <div className="form-content">
-        {currentStep === 'email' && (
+        {currentStep === 'account' && (
           <div className="form-step">
             <label>Email Address</label>
             <input
