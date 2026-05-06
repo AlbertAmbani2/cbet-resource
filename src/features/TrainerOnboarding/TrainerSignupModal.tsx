@@ -9,7 +9,7 @@ import { TRAINER_SIGNUP_FLOW, TRAINER_ONBOARDING } from '../../config/trainerOnb
 import './TrainerOnboarding.css'
 
 export function TrainerSignupModal() {
-  const { isOpen, currentStep, formData, closeSignup, nextStep, prevStep, updateFormData, submitForm } = useTrainerSignupContext()
+  const { isOpen, currentStep, formData, isLoading, error, success, closeSignup, nextStep, prevStep, updateFormData, submitForm, clearError } = useTrainerSignupContext()
 
   if (!isOpen) return null
 
@@ -18,23 +18,35 @@ export function TrainerSignupModal() {
 
   const handleNext = () => {
     // Validate current step before moving
-    if (step === 'account' && (!formData.email || !formData.password)) {
-      alert('Please enter email and password')
-      return
+    if (step === 'account') {
+      if (!formData.email) {
+        clearError()
+        return
+      }
+      if (!formData.password) {
+        clearError()
+        return
+      }
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        clearError()
+        return
+      }
     }
     if (step === 'profile' && !formData.fullName) {
-      alert('Please enter your full name')
+      clearError()
       return
     }
     if (step === 'department' && !formData.department) {
-      alert('Please select a department')
+      clearError()
       return
     }
     nextStep()
   }
 
-  const handleSubmit = () => {
-    submitForm()
+  const handleSubmit = async () => {
+    await submitForm()
   }
 
   return (
@@ -63,12 +75,48 @@ export function TrainerSignupModal() {
 
         {/* Content */}
         <div className="modal-content">
-          <div className="modal-step-label">
-            {TRAINER_SIGNUP_FLOW.stepLabels[step]}
-          </div>
+          {/* Error Message */}
+          {error && (
+            <div className="modal-error" role="alert">
+              <div className="error-content">
+                <span>⚠️ {error}</span>
+                <button 
+                  className="error-close" 
+                  onClick={clearError}
+                  aria-label="Dismiss error"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
 
-          {/* Account Step (Email + Password) */}
-          {step === 'account' && (
+          {/* Success Message */}
+          {success && (
+            <div className="modal-success" role="status">
+              <div className="success-content">
+                <span>✓ Account created successfully!</span>
+                <p className="success-subtext">Redirecting in 3 seconds...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Loading Spinner */}
+          {isLoading && (
+            <div className="modal-loading">
+              <div className="spinner" />
+              <p>Creating your account...</p>
+            </div>
+          )}
+
+          {!isLoading && !success && (
+            <>
+              <div className="modal-step-label">
+                {TRAINER_SIGNUP_FLOW.stepLabels[step]}
+              </div>
+
+              {/* Account Step (Email + Password) */}
+              {step === 'account' && (
             <div className="form-step">
               <div className="form-group">
                 <label htmlFor="email">Email Address</label>
@@ -137,6 +185,8 @@ export function TrainerSignupModal() {
               <p>Click the verification link to complete signup.</p>
             </div>
           )}
+            </>
+          )}
         </div>
 
         {/* Footer */}
@@ -144,17 +194,28 @@ export function TrainerSignupModal() {
           <button
             className="btn-secondary"
             onClick={prevStep}
-            disabled={currentStep === 0}
+            disabled={currentStep === 0 || isLoading}
+            aria-label="Go to previous step"
           >
             Back
           </button>
           {!isLastStep ? (
-            <button className="btn-primary" onClick={handleNext}>
+            <button 
+              className="btn-primary" 
+              onClick={handleNext}
+              disabled={isLoading}
+              aria-label="Go to next step"
+            >
               Next
             </button>
           ) : (
-            <button className="btn-primary" onClick={handleSubmit}>
-              Complete Setup
+            <button 
+              className="btn-primary" 
+              onClick={handleSubmit}
+              disabled={isLoading}
+              aria-label="Complete signup"
+            >
+              {isLoading ? 'Creating...' : 'Complete Setup'}
             </button>
           )}
         </div>

@@ -17,12 +17,16 @@ interface TrainerSignupContextType {
   isOpen: boolean
   currentStep: number
   formData: FormData
+  isLoading: boolean
+  error: string | null
+  success: boolean
   openSignup: (source?: string) => void
   closeSignup: () => void
   nextStep: () => void
   prevStep: () => void
   updateFormData: (field: keyof FormData, value: string) => void
-  submitForm: () => void
+  submitForm: () => Promise<void>
+  clearError: () => void
 }
 
 const TrainerSignupContext = createContext<TrainerSignupContextType | undefined>(undefined)
@@ -30,6 +34,9 @@ const TrainerSignupContext = createContext<TrainerSignupContextType | undefined>
 export function TrainerSignupProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -49,6 +56,9 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
     // Reset form after closing
     setTimeout(() => {
       setCurrentStep(0)
+      setIsLoading(false)
+      setError(null)
+      setSuccess(false)
       setFormData({
         email: '',
         password: '',
@@ -73,10 +83,50 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
     }))
   }, [])
 
-  const submitForm = useCallback(() => {
-    console.log('[Trainer Signup] Form submitted:', formData)
-    // Handle API submission here in future
-    closeSignup()
+  const clearError = useCallback(() => {
+    setError(null)
+  }, [])
+
+  const submitForm = useCallback(async () => {
+    try {
+      setError(null)
+      setIsLoading(true)
+
+      // Call backend API
+      const response = await fetch('http://localhost:3000/api/trainers/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          fullName: formData.fullName,
+          department: formData.department
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Signup failed')
+      }
+
+      const data = await response.json()
+      console.log('[Trainer Signup] Success:', data)
+      setSuccess(true)
+      setCurrentStep(3) // Move to verification step
+
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        closeSignup()
+      }, 3000)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      console.error('[Trainer Signup] Error:', errorMessage)
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }, [formData, closeSignup])
 
   return (
@@ -85,12 +135,16 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
         isOpen,
         currentStep,
         formData,
+        isLoading,
+        error,
+        success,
         openSignup,
         closeSignup,
         nextStep,
         prevStep,
         updateFormData,
-        submitForm
+        submitForm,
+        clearError
       }}
     >
       {children}

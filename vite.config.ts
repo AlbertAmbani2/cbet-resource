@@ -10,11 +10,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  test: {
-    environment: 'jsdom',
-    setupFiles: './src/test/setupTests.ts',
-    globals: true,
-    css: true,
-    pool: 'threads',
-  },
 })
