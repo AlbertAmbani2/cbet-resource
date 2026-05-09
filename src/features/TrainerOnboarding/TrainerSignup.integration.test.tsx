@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import App from '../../App'
+
+vi.mock('../../components/ui/sparkles', () => ({
+  SparklesCore: () => <div data-testid="sparkles" />,
+}))
 
 function openSignupModal() {
   fireEvent.click(screen.getByText('Become a Trainer'))
@@ -10,7 +13,22 @@ function openSignupModal() {
 
 describe('Trainer Signup Integration', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    window.location.hash = ''
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+    vi.restoreAllMocks()
+    vi.stubEnv('VITE_REQUIRE_EMAIL_VERIFICATION', 'false')
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  it('renders sign in when the header target hash is active', () => {
+    window.location.hash = '#signin'
+    render(<App />)
+    const signInLink = screen.getByRole('link', { name: 'Sign In' })
+
+    expect(signInLink).toHaveAttribute('href', '#signin')
+    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Email Address')).toBeInTheDocument()
+    expect(screen.getByLabelText('Password')).toBeInTheDocument()
   })
 
   it('opens and closes modal from CTA and close button', async () => {
@@ -37,21 +55,33 @@ describe('Trainer Signup Integration', () => {
     })
   })
 
-  it('validates required fields on step 1', () => {
+  it('shows inline validation errors without leaving the current step', () => {
     render(<App />)
     const modal = openSignupModal()
 
     fireEvent.click(within(modal).getByText('Next'))
-    expect(window.alert).toHaveBeenCalledWith('Please enter email and password')
+    expect(within(modal).getByRole('alert')).toHaveTextContent('Email is required')
+    expect(within(modal).getByText('Email & Password')).toBeInTheDocument()
   })
 
-  it('progresses through all steps and submits', async () => {
-    const user = userEvent.setup()
+  it('progresses through signup, submits to the API, and shows sign-in action', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        id: 'trainer-1',
+        email: 'trainer@example.com',
+        fullName: 'John Smith',
+        department: 'ICT',
+        createdAt: '2026-05-06T00:00:00.000Z',
+        isVerified: false
+      })
+    } as Response)
+
     render(<App />)
     let modal = openSignupModal()
 
-    await user.type(within(modal).getByLabelText('Email Address'), 'trainer@example.com')
-    await user.type(within(modal).getByLabelText('Password'), 'SecurePass123!')
+    fireEvent.change(within(modal).getByLabelText('Email Address'), { target: { value: 'trainer@example.com' } })
+    fireEvent.change(within(modal).getByLabelText('Password'), { target: { value: 'SecurePass123!' } })
     fireEvent.click(within(modal).getByText('Next'))
 
     await waitFor(() => {
@@ -59,7 +89,7 @@ describe('Trainer Signup Integration', () => {
     })
     modal = screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
 
-    await user.type(within(modal).getByLabelText('Full Name'), 'John Smith')
+    fireEvent.change(within(modal).getByLabelText('Full Name'), { target: { value: 'John Smith' } })
     fireEvent.click(within(modal).getByText('Next'))
 
     await waitFor(() => {
@@ -68,27 +98,39 @@ describe('Trainer Signup Integration', () => {
     modal = screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
 
     fireEvent.change(within(modal).getByLabelText('Department'), { target: { value: 'ICT' } })
-    fireEvent.click(within(modal).getByText('Next'))
-
-    await waitFor(() => {
-      expect(screen.getByText('Verify Account')).toBeInTheDocument()
-    })
-    modal = screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
-
-    expect(within(modal).getByText('Check your email to verify your account.')).toBeInTheDocument()
     fireEvent.click(within(modal).getByText('Complete Setup'))
 
     await waitFor(() => {
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+      expect(screen.getByText(/Account created successfully!/)).toBeInTheDocument()
     })
+
+    expect(fetch).toHaveBeenCalledWith(
+      'http://localhost:3000/api/trainers/signup',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({
+          email: 'trainer@example.com',
+          password: 'SecurePass123!',
+          fullName: 'John Smith',
+          department: 'ICT'
+        })
+      })
+    )
+    modal = screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
+    fireEvent.click(within(modal).getByText('Go to Sign In'))
+    window.dispatchEvent(new HashChangeEvent('hashchange'))
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: /Create Your Trainer Account/i })).not.toBeInTheDocument()
+    })
+    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
   })
 
   it('resets form after close and reopen', async () => {
-    const user = userEvent.setup()
     render(<App />)
     let modal = openSignupModal()
 
-    await user.type(within(modal).getByLabelText('Email Address'), 'trainer@example.com')
+    fireEvent.change(within(modal).getByLabelText('Email Address'), { target: { value: 'trainer@example.com' } })
     fireEvent.click(within(modal).getByLabelText('Close'))
 
     await waitFor(() => {
@@ -101,4 +143,3 @@ describe('Trainer Signup Integration', () => {
     expect(within(modal).getByLabelText('Email Address')).toHaveValue('')
   })
 })
-

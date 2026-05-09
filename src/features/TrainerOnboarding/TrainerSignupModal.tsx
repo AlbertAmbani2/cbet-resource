@@ -9,44 +9,54 @@ import { TRAINER_SIGNUP_FLOW, TRAINER_ONBOARDING } from '../../config/trainerOnb
 import './TrainerOnboarding.css'
 
 export function TrainerSignupModal() {
-  const { isOpen, currentStep, formData, isLoading, error, success, closeSignup, nextStep, prevStep, updateFormData, submitForm, clearError } = useTrainerSignupContext()
+  const { isOpen, currentStep, formData, isLoading, error, success, isExistingUser, closeSignup, nextStep, prevStep, updateFormData, submitForm, clearError, setSignupError } = useTrainerSignupContext()
 
   if (!isOpen) return null
 
+  // TESTING: Disable email verification requirement
+  // TODO: Re-enable verification in production
+  const requiresVerification = import.meta.env.VITE_REQUIRE_EMAIL_VERIFICATION === 'true'
+  const maxStep = requiresVerification ? 3 : 2 // Skip verification step (index 3) in testing mode
   const step = TRAINER_SIGNUP_FLOW.steps[currentStep]
-  const isLastStep = currentStep === TRAINER_SIGNUP_FLOW.steps.length - 1
+  const isLastStep = currentStep === maxStep
 
   const handleNext = () => {
     // Validate current step before moving
     if (step === 'account') {
       if (!formData.email) {
-        clearError()
+        setSignupError('Email is required')
         return
       }
       if (!formData.password) {
-        clearError()
+        setSignupError('Password is required')
         return
       }
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(formData.email)) {
-        clearError()
+        setSignupError('Email format is invalid')
         return
       }
     }
     if (step === 'profile' && !formData.fullName) {
-      clearError()
+      setSignupError('Full name is required')
       return
     }
     if (step === 'department' && !formData.department) {
-      clearError()
+      setSignupError('Department is required')
       return
     }
+    clearError()
     nextStep()
   }
 
   const handleSubmit = async () => {
     await submitForm()
+  }
+
+  const handleGoToSignIn = () => {
+    closeSignup()
+    window.location.hash = '#signin'
   }
 
   return (
@@ -66,11 +76,15 @@ export function TrainerSignupModal() {
 
         {/* Progress */}
         <div className="modal-progress">
-          {TRAINER_SIGNUP_FLOW.steps.map((s, idx) => (
-            <div key={s} className={`progress-step ${idx <= currentStep ? 'active' : ''}`}>
-              <div className="step-number">{idx + 1}</div>
-            </div>
-          ))}
+          {TRAINER_SIGNUP_FLOW.steps.map((s, idx) => {
+            // Skip verification step (index 3) in testing mode
+            if (!requiresVerification && idx > maxStep) return null
+            return (
+              <div key={s} className={`progress-step ${idx <= currentStep ? 'active' : ''}`}>
+                <div className="step-number">{idx + 1}</div>
+              </div>
+            )
+          })}
         </div>
 
         {/* Content */}
@@ -88,6 +102,14 @@ export function TrainerSignupModal() {
                   ✕
                 </button>
               </div>
+              {isExistingUser && (
+                <div className="error-action">
+                  <p>This email is already registered.</p>
+                  <button className="btn-primary" onClick={handleGoToSignIn}>
+                    Go to Sign In
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -96,7 +118,16 @@ export function TrainerSignupModal() {
             <div className="modal-success" role="status">
               <div className="success-content">
                 <span>✓ Account created successfully!</span>
-                <p className="success-subtext">Redirecting in 3 seconds...</p>
+                <p className="success-subtext">
+                  {requiresVerification
+                    ? 'Check your email to verify your account.'
+                    : 'Your account is ready. Sign in to continue.'}
+                </p>
+                {!requiresVerification && (
+                  <button className="btn-primary" onClick={handleGoToSignIn}>
+                    Go to Sign In
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -178,8 +209,8 @@ export function TrainerSignupModal() {
             </div>
           )}
 
-          {/* Verification Step */}
-          {step === 'verification' && (
+          {/* Verification Step (Only shown if email verification required) */}
+          {requiresVerification && step === 'verification' && (
             <div className="form-step verification-step">
               <p>Check your email to verify your account.</p>
               <p>Click the verification link to complete signup.</p>
@@ -190,35 +221,37 @@ export function TrainerSignupModal() {
         </div>
 
         {/* Footer */}
-        <div className="modal-footer">
-          <button
-            className="btn-secondary"
-            onClick={prevStep}
-            disabled={currentStep === 0 || isLoading}
-            aria-label="Go to previous step"
-          >
-            Back
-          </button>
-          {!isLastStep ? (
-            <button 
-              className="btn-primary" 
-              onClick={handleNext}
-              disabled={isLoading}
-              aria-label="Go to next step"
+        {!success && (
+          <div className="modal-footer">
+            <button
+              className="btn-secondary"
+              onClick={prevStep}
+              disabled={currentStep === 0 || isLoading}
+              aria-label="Go to previous step"
             >
-              Next
+              Back
             </button>
-          ) : (
-            <button 
-              className="btn-primary" 
-              onClick={handleSubmit}
-              disabled={isLoading}
-              aria-label="Complete signup"
-            >
-              {isLoading ? 'Creating...' : 'Complete Setup'}
-            </button>
-          )}
-        </div>
+            {!isLastStep ? (
+              <button 
+                className="btn-primary" 
+                onClick={handleNext}
+                disabled={isLoading}
+                aria-label="Go to next step"
+              >
+                Next
+              </button>
+            ) : (
+              <button 
+                className="btn-primary" 
+                onClick={handleSubmit}
+                disabled={isLoading}
+                aria-label="Complete signup"
+              >
+                {isLoading ? 'Creating...' : 'Complete Setup'}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </>
   )

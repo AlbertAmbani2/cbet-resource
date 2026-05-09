@@ -72,13 +72,14 @@ export const TRAINER_SIGNUP_FLOW = {
   },
   departments: [
     'ICT',
-    'Business Studies',
+    'Business',
     'Automotive',
     'Hospitality',
     'Construction',
-    'Cosmetology',
+    'Tourism',
+    'Health',
     'Agriculture',
-    'Health Sciences'
+    'Other'
   ]
 }
 

@@ -20,7 +20,7 @@ export default function Header() {
             <a href="#faq">About</a>
           </nav>
 
-          <a href="#signup" className="btn-download">Sign In</a>
+          <a href="#signin" className="btn-download">Sign In</a>
         </div>
       </div>
     </header>

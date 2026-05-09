@@ -20,6 +20,7 @@ interface TrainerSignupContextType {
   isLoading: boolean
   error: string | null
   success: boolean
+  isExistingUser: boolean
   openSignup: (source?: string) => void
   closeSignup: () => void
   nextStep: () => void
@@ -27,6 +28,7 @@ interface TrainerSignupContextType {
   updateFormData: (field: keyof FormData, value: string) => void
   submitForm: () => Promise<void>
   clearError: () => void
+  setSignupError: (message: string) => void
 }
 
 const TrainerSignupContext = createContext<TrainerSignupContextType | undefined>(undefined)
@@ -37,6 +39,7 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [isExistingUser, setIsExistingUser] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -59,6 +62,7 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
       setIsLoading(false)
       setError(null)
       setSuccess(false)
+      setIsExistingUser(false)
       setFormData({
         email: '',
         password: '',
@@ -85,15 +89,25 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
 
   const clearError = useCallback(() => {
     setError(null)
+    setIsExistingUser(false)
+  }, [])
+
+  const setSignupError = useCallback((message: string) => {
+    setError(message)
+    setIsExistingUser(false)
   }, [])
 
   const submitForm = useCallback(async () => {
     try {
       setError(null)
+      setIsExistingUser(false)
+      setSuccess(false)
       setIsLoading(true)
 
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
       // Call backend API
-      const response = await fetch('http://localhost:3000/api/trainers/signup', {
+      const response = await fetch(`${apiUrl}/api/trainers/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -114,16 +128,22 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
       const data = await response.json()
       console.log('[Trainer Signup] Success:', data)
       setSuccess(true)
-      setCurrentStep(3) // Move to verification step
+      setIsExistingUser(false)
 
-      // Auto-close after 3 seconds
-      setTimeout(() => {
-        closeSignup()
-      }, 3000)
+      // TESTING: Disable email verification requirement
+      // TODO: Re-enable verification step in production by setting VITE_REQUIRE_EMAIL_VERIFICATION=true
+      const requiresVerification = import.meta.env.VITE_REQUIRE_EMAIL_VERIFICATION === 'true'
+
+      if (requiresVerification) {
+        setCurrentStep(3) // Move to verification step
+      } else {
+        console.log('[Trainer Signup] Email verification disabled (testing mode)')
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       console.error('[Trainer Signup] Error:', errorMessage)
       setError(errorMessage)
+      setIsExistingUser(errorMessage.toLowerCase().includes('already registered'))
     } finally {
       setIsLoading(false)
     }
@@ -138,13 +158,15 @@ export function TrainerSignupProvider({ children }: { children: ReactNode }) {
         isLoading,
         error,
         success,
+        isExistingUser,
         openSignup,
         closeSignup,
         nextStep,
         prevStep,
         updateFormData,
         submitForm,
-        clearError
+        clearError,
+        setSignupError
       }}
     >
       {children}
