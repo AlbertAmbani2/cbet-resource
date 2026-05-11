@@ -1,4 +1,5 @@
 ﻿import { BookOpen } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './Header.css'
 
 export default function Header() {
@@ -12,7 +13,7 @@ export default function Header() {
             </div>
             <span className="logo-text">cbet-resource</span>
           </a>
-          
+
           <nav className="nav-menu">
             <a href="#resources">Browse Resources</a>
             <a href="#how-it-works">How It Works</a>
@@ -20,7 +21,7 @@ export default function Header() {
             <a href="#faq">About</a>
           </nav>
 
-          <a href="#signin" className="btn-download">Sign In</a>
+          <Link to="/signin" className="btn-download">Sign In</Link>
         </div>
       </div>
     </header>

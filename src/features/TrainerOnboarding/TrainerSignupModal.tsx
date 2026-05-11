@@ -4,11 +4,13 @@
  * Uses global context for state management
  */
 
+import { useNavigate } from 'react-router-dom'
 import { useTrainerSignupContext } from './TrainerSignupContext'
 import { TRAINER_SIGNUP_FLOW, TRAINER_ONBOARDING } from '../../config/trainerOnboarding'
 import './TrainerOnboarding.css'
 
 export function TrainerSignupModal() {
+  const navigate = useNavigate()
   const { isOpen, currentStep, formData, isLoading, error, success, isExistingUser, closeSignup, nextStep, prevStep, updateFormData, submitForm, clearError, setSignupError } = useTrainerSignupContext()
 
   if (!isOpen) return null
@@ -56,7 +58,7 @@ export function TrainerSignupModal() {
 
   const handleGoToSignIn = () => {
     closeSignup()
-    window.location.hash = '#signin'
+    navigate('/signin')
   }
 
   return (

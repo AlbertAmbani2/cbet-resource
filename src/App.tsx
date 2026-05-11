@@ -1,4 +1,5 @@
-﻿import './App.css'
+﻿import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './App.css'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
@@ -12,25 +13,36 @@ import { SignInPage } from './pages/SignInPage'
 
 function App() {
   return (
-    <TrainerSignupProvider>
-      <div className="app relative w-full overflow-hidden">
-        {/* Global Modal */}
-        <TrainerSignupModal />
-        <SignInPage />
+    <Router>
+      <TrainerSignupProvider>
+        <div className="app relative w-full overflow-hidden">
+          {/* Global Modal */}
+          <TrainerSignupModal />
 
-        {/* Content wrapper */}
-        <div className="relative z-10">
-          <Header />
-          <Hero />
-          <ResourceBrowser />
-          <HowItWorks />
-          <TrainersHub />
-          <Payment />
-          <FAQ />
-          <Footer />
+          <Routes>
+            {/* Sign In Page */}
+            <Route path="/signin" element={<SignInPage />} />
+
+            {/* Home Page */}
+            <Route path="/" element={
+              <>
+                {/* Content wrapper */}
+                <div className="relative z-10">
+                  <Header />
+                  <Hero />
+                  <ResourceBrowser />
+                  <HowItWorks />
+                  <TrainersHub />
+                  <Payment />
+                  <FAQ />
+                  <Footer />
+                </div>
+              </>
+            } />
+          </Routes>
         </div>
-      </div>
-    </TrainerSignupProvider>
+      </TrainerSignupProvider>
+    </Router>
   )
 }
 

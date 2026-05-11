@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
+import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export function SignInPage() {
-  const [visible, setVisible] = useState(window.location.hash === '#signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -10,20 +10,7 @@ export function SignInPage() {
   const [error, setError] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      setVisible(window.location.hash === '#signin')
-    }
-
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
-
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
-
-  const handleClose = () => {
-    window.location.hash = ''
-  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -61,41 +48,27 @@ export function SignInPage() {
     formRef.current?.requestSubmit()
   }
 
-  if (!visible) {
-    return null
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4">
-      <div className="w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Sign In</h2>
-            <p className="mt-1 text-sm text-slate-600">Enter your registered email and password.</p>
-          </div>
-          <button
-            type="button"
-            className="text-slate-500 transition hover:text-slate-900"
-            onClick={handleClose}
-            aria-label="Close sign in page"
-          >
-            ✕
-          </button>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Sign In</h1>
+          <p className="text-slate-600">Enter your registered email and password.</p>
         </div>
 
         {error && (
-          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             {error}
           </div>
         )}
 
         {message && (
-          <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+          <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
             {message}
           </div>
         )}
 
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="signin-email" className="block text-sm font-medium text-slate-700">
               Email Address
@@ -128,7 +101,7 @@ export function SignInPage() {
         </form>
 
         {/* Footer with Sign In Button */}
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="mt-8 space-y-4">
           <button
             type="button"
             onClick={handleSignInClick}
@@ -138,16 +111,18 @@ export function SignInPage() {
             {isLoading ? 'Signing in…' : 'Sign In'}
           </button>
 
-          <div className="flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              className="font-medium text-sky-600 transition hover:text-sky-800"
-              onClick={handleClose}
+          <div className="text-center">
+            <Link
+              to="/"
+              className="inline-block font-medium text-sky-600 transition hover:text-sky-800"
             >
-              Back to homepage
-            </button>
-            <span>Need help? Contact support if you cannot sign in.</span>
+              ← Back to homepage
+            </Link>
           </div>
+        </div>
+
+        <div className="mt-8 text-center text-sm text-slate-500">
+          Need help? Contact support if you cannot sign in.
         </div>
       </div>
     </div>
