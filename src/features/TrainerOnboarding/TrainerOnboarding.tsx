@@ -1,12 +1,3 @@
-/**
- * TrainerOnboarding Feature Component
- * Manages the complete trainer signup flow
- * Can be used as:
- * 1. A preview/summary section (TrainerOnboarding.Preview)
- * 2. A full modal (TrainerOnboarding.Modal)
- * 3. A full page step-by-step flow
- */
-
 import TrainerCTAGroup from '../../components/CTAs/TrainerCTAGroup'
 import { TRAINER_ONBOARDING, TRAINER_SIGNUP_FLOW } from '../../config/trainerOnboarding'
 import { useTrainerSignup } from './hooks/useTrainerSignup'
@@ -50,9 +41,6 @@ TrainerOnboarding.Preview = function TrainerOnboardingPreview({
           <TrainerCTAGroup
             primaryLabel={TRAINER_ONBOARDING.primaryCTA.label}
             onPrimaryClick={onSignupClick}
-            showSecondary
-            secondaryLabel="Browse Resources"
-            onSecondaryClick={() => {}}
           />
         </div>
 

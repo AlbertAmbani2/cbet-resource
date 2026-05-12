@@ -1,7 +1,10 @@
 ﻿import { Mail, Users, X } from 'lucide-react'
+import { useTrainerSignup } from '../features/TrainerOnboarding'
 import './Footer.css'
 
 export default function Footer() {
+  const { openSignup } = useTrainerSignup()
+
   return (
     <footer className="footer">
       <div className="container">
@@ -38,7 +41,15 @@ export default function Footer() {
           <div className="footer-section">
             <h4>For Trainers</h4>
             <ul>
-              <li><a href="#trainers-hub">Create Account</a></li>
+              <li>
+                <button
+                  type="button"
+                  className="footer-link-button"
+                  onClick={() => openSignup('footer')}
+                >
+                  Create Account
+                </button>
+              </li>
               <li><a href="#how-it-works">Upload by Department</a></li>
               <li><a href="#how-it-works">Admin Review Process</a></li>
               <li><a href="#resources">Browse Resources</a></li>
@@ -49,9 +60,25 @@ export default function Footer() {
             <h4>Resources</h4>
             <ul>
               <li><a href="#faq">FAQ</a></li>
-              <li><a href="#signup">Sign Up</a></li>
+              <li>
+                <button
+                  type="button"
+                  className="footer-link-button"
+                  onClick={() => openSignup('footer')}
+                >
+                  Sign Up
+                </button>
+              </li>
               <li><a href="#resources">Resources</a></li>
-              <li><a href="#trainers-hub">Become Trainer</a></li>
+              <li>
+                <button
+                  type="button"
+                  className="footer-link-button"
+                  onClick={() => openSignup('footer')}
+                >
+                  Become Trainer
+                </button>
+              </li>
             </ul>
           </div>
 

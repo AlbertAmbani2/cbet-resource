@@ -75,14 +75,22 @@
   gap: 12px;
 }
 
-.footer-section a {
+.footer-section a,
+.footer-link-button {
   color: var(--text-secondary);
   font-size: 0.9rem;
   transition: color 0.3s ease;
   text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
-.footer-section a:hover {
+.footer-section a:hover,
+.footer-link-button:hover {
   color: var(--accent-blue);
 }
 
