@@ -1,4 +1,13 @@
-export type TrainerDepartment = 
+/**
+ * Shared Types for Frontend and Backend
+ * This file contains all TypeScript interfaces and types used across the API boundary
+ */
+
+// ============================================================================
+// Trainer Types
+// ============================================================================
+
+export type TrainerDepartment =
   | 'ICT'
   | 'Business'
   | 'Automotive'
@@ -9,46 +18,16 @@ export type TrainerDepartment =
   | 'Agriculture'
   | 'Other';
 
-export type ResourceType = 
-  | 'lesson_plan'
-  | 'notes'
-  | 'scheme_of_work'
-  | 'assessment'
-  | 'other';
-
-export type ResourceStatus = 
-  | 'draft'
-  | 'pending_review'
-  | 'approved'
-  | 'rejected';
-
-export type SubscriptionStatus = 
-  | 'active'
-  | 'inactive'
-  | 'cancelled'
-  | 'past_due';
-
-export type PlanType = 
-  | 'free'
-  | 'premium_monthly'
-  | 'premium_annual';
-
-export type PaymentStatus = 
-  | 'pending'
-  | 'success'
-  | 'failed'
-  | 'refunded';
-
-export type PaymentMethod = 
-  | 'm_pesa'
-  | 'card'
-  | 'bank_transfer';
-
 export interface TrainerSignupRequest {
   email: string;
   password: string;
   fullName: string;
   department: TrainerDepartment;
+}
+
+export interface TrainerSigninRequest {
+  email: string;
+  password: string;
 }
 
 export interface TrainerResponse {
@@ -76,6 +55,23 @@ export interface TrainerProfileUpdate {
   department?: TrainerDepartment;
 }
 
+// ============================================================================
+// Resource Types
+// ============================================================================
+
+export type ResourceType =
+  | 'lesson_plan'
+  | 'notes'
+  | 'scheme_of_work'
+  | 'assessment'
+  | 'other';
+
+export type ResourceStatus =
+  | 'draft'
+  | 'pending_review'
+  | 'approved'
+  | 'rejected';
+
 export interface Resource {
   id: string;
   trainerId: string;
@@ -102,9 +98,22 @@ export interface ResourceUploadRequest {
   resourceType: ResourceType;
   description?: string;
   cbetUnits?: string;
-  trainerId?: string;
-  file?: unknown; // File handling deferred to Phase 2 with multer setup
 }
+
+// ============================================================================
+// Subscription & Payment Types
+// ============================================================================
+
+export type SubscriptionStatus =
+  | 'active'
+  | 'inactive'
+  | 'cancelled'
+  | 'past_due';
+
+export type PlanType =
+  | 'free'
+  | 'premium_monthly'
+  | 'premium_annual';
 
 export interface Subscription {
   id: string;
@@ -121,6 +130,17 @@ export interface Subscription {
   createdAt: string;
   updatedAt: string;
 }
+
+export type PaymentStatus =
+  | 'pending'
+  | 'success'
+  | 'failed'
+  | 'refunded';
+
+export type PaymentMethod =
+  | 'm_pesa'
+  | 'card'
+  | 'bank_transfer';
 
 export interface PaymentHistoryRecord {
   id: string;
@@ -151,6 +171,10 @@ export interface PaymentPlan {
   updatedAt: string;
 }
 
+// ============================================================================
+// API Response Wrappers
+// ============================================================================
+
 export interface ApiError {
   error: string;
   details?: string;
@@ -159,4 +183,14 @@ export interface ApiError {
 export interface ApiSuccess<T> {
   success: boolean;
   data: T;
+}
+
+// ============================================================================
+// HTTP Request/Response Types
+// ============================================================================
+
+export interface HttpResponse<T = any> {
+  status: number;
+  data?: T;
+  error?: string;
 }

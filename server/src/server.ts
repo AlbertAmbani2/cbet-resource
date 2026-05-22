@@ -1,28 +1,26 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import trainerRoutes from './routes/trainerRoutes';
-import { query } from './db';
+import trainerRoutes from './routes/trainerRoutes.js';
+import { query, runMigrations } from './db.js';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+type DatabaseStatus = 'initializing' | 'ready' | 'unavailable';
+
+let databaseStatus: DatabaseStatus = 'initializing';
 
 /**
  * Middleware
  */
 app.use(express.json());
 app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
-    }
-  },
+  origin: process.env.FRONTEND_URL
+    ? [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174']
+    : ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true
 }));
 
@@ -31,7 +29,8 @@ app.use(cors({
  */
 app.get('/health', (req, res) => {
   res.json({
-    status: 'ok',
+    status: databaseStatus === 'ready' ? 'ok' : databaseStatus,
+    database: databaseStatus,
     timestamp: new Date().toISOString(),
     environment: NODE_ENV
   });
@@ -40,7 +39,18 @@ app.get('/health', (req, res) => {
 /**
  * API routes
  */
-app.use('/api/trainers', trainerRoutes);
+app.use('/api/trainers', (req, res, next) => {
+  if (databaseStatus !== 'ready') {
+    res.status(503).json({
+      error: databaseStatus === 'initializing'
+        ? 'Database is still initializing. Please try again shortly.'
+        : 'Database is unavailable. Check the backend database connection and try again.'
+    });
+    return;
+  }
+
+  next();
+}, trainerRoutes);
 
 /**
  * 404 handler
@@ -52,19 +62,21 @@ app.use((req, res) => {
 /**
  * Error handler
  */
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response) => {
   console.error('[Server] Error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
 /**
  * Initialize database on startup
+ * Creates initial trainers table if it doesn't exist
+ * Then runs all migrations to ensure schema is up to date
  */
 async function initializeDatabase(): Promise<void> {
   try {
     console.log('[DB] Initializing database...');
 
-    // Create trainers table if it doesn't exist
+    // Create trainers table if it doesn't exist (original table)
     await query(`
       CREATE TABLE IF NOT EXISTS trainers (
         id UUID PRIMARY KEY,
@@ -82,31 +94,32 @@ async function initializeDatabase(): Promise<void> {
       CREATE INDEX IF NOT EXISTS idx_trainers_email ON trainers(email);
     `);
 
-    console.log('[DB] Database initialized successfully');
+    console.log('[DB] Base trainers table initialized');
+
+    // Run all migrations (creates additional columns, tables, indexes)
+    await runMigrations();
+
+    console.log('[DB] Database initialization completed successfully');
+    databaseStatus = 'ready';
   } catch (error) {
+    databaseStatus = 'unavailable';
     console.error('[DB] Failed to initialize database:', error);
-    throw error;
   }
 }
 
 /**
  * Start server
  */
-async function start(): Promise<void> {
-  try {
-    // Initialize database
-    await initializeDatabase();
+function start(): void {
+  app.listen(PORT, () => {
+    console.log(`[Server] CBET Backend running on http://localhost:${PORT}`);
+    console.log(`[Server] Environment: ${NODE_ENV}`);
+    console.log(`[Server] Health check: GET http://localhost:${PORT}/health`);
+    console.log(`[Server] Signup endpoint: POST http://localhost:${PORT}/api/trainers/signup`);
+    console.log(`[Server] Signin endpoint: POST http://localhost:${PORT}/api/trainers/signin`);
+  });
 
-    app.listen(PORT, () => {
-      console.log(`[Server] CBET Backend running on http://localhost:${PORT}`);
-      console.log(`[Server] Environment: ${NODE_ENV}`);
-      console.log(`[Server] Health check: GET http://localhost:${PORT}/health`);
-      console.log(`[Server] Signup endpoint: POST http://localhost:${PORT}/api/trainers/signup`);
-    });
-  } catch (error) {
-    console.error('[Server] Failed to start:', error);
-    process.exit(1);
-  }
+  void initializeDatabase();
 }
 
 start();

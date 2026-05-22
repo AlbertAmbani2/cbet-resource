@@ -1,19 +1,26 @@
 import { Router } from 'express';
-import { signup } from '../controllers/trainerController';
-import { signin } from '../controllers/signinController';
+import {
+  signup,
+  getTrainerProfile,
+  getMyProfile,
+  updateTrainerProfile
+} from '../controllers/trainerController.js';
+import { signin } from '../controllers/signinController.js';
+import { requireTrainerAuth, requireTrainerOwnership } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
 /**
- * POST /api/trainers/signup
- * Create a new trainer account with email, password, name, and department
+ * Authentication Endpoints
  */
 router.post('/signup', signup);
+router.post('/signin', signin);
 
 /**
- * POST /api/trainers/signin
- * Authenticate trainer with email and password
+ * Trainer Profile Endpoints
  */
-router.post('/signin', signin);
+router.get('/me/profile', requireTrainerAuth, getMyProfile);
+router.get('/:id', getTrainerProfile);
+router.put('/:id', requireTrainerAuth, requireTrainerOwnership, updateTrainerProfile);
 
 export default router;

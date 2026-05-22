@@ -38,7 +38,11 @@ export function SignInPage() {
       setEmail('')
       setPassword('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Sign in failed')
+      if (err instanceof TypeError) {
+        setError(`Cannot reach API at ${apiUrl}. Make sure the backend is running with yarn dev and http://localhost:3000/health responds.`)
+      } else {
+        setError(err instanceof Error ? err.message : 'Sign in failed')
+      }
     } finally {
       setIsLoading(false)
     }
