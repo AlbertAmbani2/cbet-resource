@@ -1,8 +1,11 @@
 ﻿import { BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../features/TrainerOnboarding'
 import './Header.css'
 
 export default function Header() {
+  const { trainerData, logout } = useAuth()
+
   return (
     <header className="header">
       <div className="container">
@@ -21,7 +24,17 @@ export default function Header() {
             <a href="#faq">About</a>
           </nav>
 
-          <Link to="/signin" className="btn-download">Sign In</Link>
+          {trainerData ? (
+            <div className="header-actions">
+              <span className="header-user">{trainerData.fullName}</span>
+              <Link to="/dashboard" className="btn-download">Dashboard</Link>
+              <button type="button" className="btn-download" onClick={logout}>
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/signin" className="btn-download">Sign In</Link>
+          )}
         </div>
       </div>
     </header>

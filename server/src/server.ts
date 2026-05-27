@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import trainerRoutes from './routes/trainerRoutes.js';
+import resourceRoutes from './routes/resourceRoutes.js';
 import { query, runMigrations } from './db.js';
 
 dotenv.config();
@@ -51,6 +52,19 @@ app.use('/api/trainers', (req, res, next) => {
 
   next();
 }, trainerRoutes);
+
+app.use('/api/resources', (req, res, next) => {
+  if (databaseStatus !== 'ready') {
+    res.status(503).json({
+      error: databaseStatus === 'initializing'
+        ? 'Database is still initializing. Please try again shortly.'
+        : 'Database is unavailable. Check the backend database connection and try again.'
+    });
+    return;
+  }
+
+  next();
+}, resourceRoutes);
 
 /**
  * 404 handler

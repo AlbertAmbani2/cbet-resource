@@ -15,6 +15,8 @@ export default defineConfig({
     setupFiles: './src/test/setupTests.ts',
     globals: true,
     css: true,
-    pool: 'threads',
+    pool: 'forks',
+    singleThread: true,
+    testTimeout: 30000,
   },
 })

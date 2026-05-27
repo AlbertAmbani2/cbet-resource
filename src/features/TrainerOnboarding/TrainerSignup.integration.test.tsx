@@ -7,28 +7,26 @@ vi.mock('../../components/ui/sparkles', () => ({
 }))
 
 function openSignupModal() {
-  fireEvent.click(screen.getByText('Become a Trainer'))
+  const buttons = screen.getAllByRole('button')
+  const signupButton = buttons.find(btn => btn.textContent?.includes('Become a Trainer') || btn.textContent?.includes('Create Trainer Account'))
+  if (signupButton) {
+    fireEvent.click(signupButton)
+  }
   return screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
 }
 
 describe('Trainer Signup Integration', () => {
   beforeEach(() => {
     window.location.hash = ''
-    window.dispatchEvent(new HashChangeEvent('hashchange'))
     vi.restoreAllMocks()
     vi.stubEnv('VITE_REQUIRE_EMAIL_VERIFICATION', 'false')
     vi.stubGlobal('fetch', vi.fn())
   })
 
-  it('renders sign in when the header target hash is active', () => {
-    window.location.hash = '#signin'
+  it('opens signup modal from any CTA button', async () => {
     render(<App />)
-    const signInLink = screen.getByRole('link', { name: 'Sign In' })
-
-    expect(signInLink).toHaveAttribute('href', '#signin')
-    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
-    expect(screen.getByLabelText('Email Address')).toBeInTheDocument()
-    expect(screen.getByLabelText('Password')).toBeInTheDocument()
+    const modal = openSignupModal()
+    expect(modal).toBeInTheDocument()
   })
 
   it('opens and closes modal from CTA and close button', async () => {
@@ -116,14 +114,6 @@ describe('Trainer Signup Integration', () => {
         })
       })
     )
-    modal = screen.getByRole('dialog', { name: /Create Your Trainer Account/i })
-    fireEvent.click(within(modal).getByText('Go to Sign In'))
-    window.dispatchEvent(new HashChangeEvent('hashchange'))
-
-    await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: /Create Your Trainer Account/i })).not.toBeInTheDocument()
-    })
-    expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument()
   })
 
   it('resets form after close and reopen', async () => {

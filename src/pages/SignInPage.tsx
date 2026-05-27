@@ -1,51 +1,26 @@
 import type { FormEvent } from 'react'
-import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../features/TrainerOnboarding'
 
 export function SignInPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const { formData, updateFormData, submitForm, error, success, isLoading, switchMode, trainerData, mode } = useAuth()
+  const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+  useEffect(() => {
+    switchMode('signin')
+  }, [switchMode])
+
+  useEffect(() => {
+    if (success && trainerData && mode === 'signin') {
+      navigate('/dashboard')
+    }
+  }, [success, trainerData, mode, navigate])
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setError(null)
-    setMessage(null)
-    setIsLoading(true)
-
-    try {
-      const response = await fetch(`${apiUrl}/api/trainers/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Sign in failed')
-      }
-
-      const data = await response.json()
-      console.log('[SignIn] Success:', data)
-      setMessage('Successfully signed in. You can now continue to the app.')
-      setEmail('')
-      setPassword('')
-    } catch (err) {
-      if (err instanceof TypeError) {
-        setError(`Cannot reach API at ${apiUrl}. Make sure the backend is running with yarn dev and http://localhost:3000/health responds.`)
-      } else {
-        setError(err instanceof Error ? err.message : 'Sign in failed')
-      }
-    } finally {
-      setIsLoading(false)
-    }
+    await submitForm()
   }
 
   const handleSignInClick = () => {
@@ -66,12 +41,6 @@ export function SignInPage() {
           </div>
         )}
 
-        {message && (
-          <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-            {message}
-          </div>
-        )}
-
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="signin-email" className="block text-sm font-medium text-slate-700">
@@ -80,8 +49,8 @@ export function SignInPage() {
             <input
               id="signin-email"
               type="email"
-              value={email}
-              onChange={event => setEmail(event.target.value)}
+              value={formData.email}
+              onChange={event => updateFormData('email', event.target.value)}
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
               placeholder="you@example.com"
               required
@@ -95,35 +64,46 @@ export function SignInPage() {
             <input
               id="signin-password"
               type="password"
-              value={password}
-              onChange={event => setPassword(event.target.value)}
+              value={formData.password}
+              onChange={event => updateFormData('password', event.target.value)}
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
               placeholder="Enter your password"
               required
             />
           </div>
+
+          <div className="mt-8 space-y-4">
+            <button
+              type="button"
+              onClick={handleSignInClick}
+              className="w-full rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in…' : 'Sign In'}
+            </button>
+
+            <div className="text-center">
+              <Link
+                to="/"
+                className="inline-block font-medium text-sky-600 transition hover:text-sky-800"
+              >
+                ← Back to homepage
+              </Link>
+            </div>
+          </div>
         </form>
 
-        {/* Footer with Sign In Button */}
-        <div className="mt-8 space-y-4">
-          <button
-            type="button"
-            onClick={handleSignInClick}
-            className="w-full rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Signing in…' : 'Sign In'}
-          </button>
-
-          <div className="text-center">
-            <Link
-              to="/"
-              className="inline-block font-medium text-sky-600 transition hover:text-sky-800"
-            >
-              ← Back to homepage
-            </Link>
+        {success && (
+          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+            Successfully signed in. You can now continue to the app.
           </div>
-        </div>
+        )}
+
+        {trainerData && (
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            Signed in as {trainerData.fullName} ({trainerData.email})
+          </div>
+        )}
 
         <div className="mt-8 text-center text-sm text-slate-500">
           Need help? Contact support if you cannot sign in.

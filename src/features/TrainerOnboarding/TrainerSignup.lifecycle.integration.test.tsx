@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
 import TrainerCTA from '../../components/CTAs/TrainerCTA'
 import { TrainerSignupModal } from './TrainerSignupModal'
 import { TrainerSignupProvider } from './TrainerSignupContext'
@@ -20,24 +21,26 @@ function SignupHarness() {
   )
 }
 
-describe('Trainer signup lifecycle integration', () => {
-  it('opens modal from CTA through shared hook context', () => {
-    render(
+function SignupWithRouter() {
+  return (
+    <BrowserRouter>
       <TrainerSignupProvider>
         <SignupHarness />
-      </TrainerSignupProvider>,
-    )
+      </TrainerSignupProvider>
+    </BrowserRouter>
+  )
+}
+
+describe('Trainer signup lifecycle integration', () => {
+  it('opens modal from CTA through shared hook context', () => {
+    render(<SignupWithRouter />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Signup' }))
     expect(screen.getByRole('dialog', { name: /Create Your Trainer Account/i })).toBeInTheDocument()
   })
 
   it('closes modal from close button and backdrop', async () => {
-    const { container } = render(
-      <TrainerSignupProvider>
-        <SignupHarness />
-      </TrainerSignupProvider>,
-    )
+    const { container } = render(<SignupWithRouter />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Signup' }))
     fireEvent.click(screen.getByLabelText('Close'))
@@ -55,11 +58,7 @@ describe('Trainer signup lifecycle integration', () => {
   })
 
   it('retains entered form data while progressing and navigating back', async () => {
-    render(
-      <TrainerSignupProvider>
-        <SignupHarness />
-      </TrainerSignupProvider>,
-    )
+    render(<SignupWithRouter />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Open Signup' }))
 

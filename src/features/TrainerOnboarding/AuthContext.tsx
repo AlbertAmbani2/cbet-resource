@@ -4,7 +4,7 @@
  * Provides global state for authentication modals
  */
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 
 type AuthMode = 'signup' | 'signin'
 
@@ -25,6 +25,9 @@ interface TrainerData {
 }
 
 interface AuthContextType {
+  // Initialization State
+  isInitialized: boolean
+
   // Modal State
   isOpen: boolean
   mode: AuthMode // 'signup' or 'signin'
@@ -49,6 +52,8 @@ interface AuthContextType {
   updateFormData: (field: keyof FormData, value: string) => void
   submitForm: () => Promise<void>
   clearError: () => void
+  logout: () => void
+  updateTrainerData: (updatedTrainer: TrainerData) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -61,6 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [trainerData, setTrainerData] = useState<TrainerData | null>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  useEffect(() => {
+    const stored = localStorage.getItem('trainerData')
+    if (stored) {
+      try {
+        setTrainerData(JSON.parse(stored))
+      } catch {
+        localStorage.removeItem('trainerData')
+        localStorage.removeItem('trainerId')
+      }
+    }
+    setIsInitialized(true)
+  }, [])
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -137,6 +156,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearError = useCallback(() => {
     setError(null)
+  }, [])
+
+  const logout = useCallback(() => {
+    localStorage.removeItem('trainerData')
+    localStorage.removeItem('trainerId')
+    setTrainerData(null)
+    setMode('signin')
+    setCurrentStep(0)
+    setSuccess(false)
+    setError(null)
+  }, [])
+
+  const updateTrainerData = useCallback((updatedTrainer: TrainerData) => {
+    setTrainerData(updatedTrainer)
+    localStorage.setItem('trainerData', JSON.stringify(updatedTrainer))
   }, [])
 
   const submitForm = useCallback(async () => {
@@ -226,6 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        isInitialized,
         isOpen,
         mode,
         currentStep,
@@ -242,7 +277,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         prevStep,
         updateFormData,
         submitForm,
-        clearError
+        clearError,
+        logout,
+        updateTrainerData
       }}
     >
       {children}
