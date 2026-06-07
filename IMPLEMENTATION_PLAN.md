@@ -437,25 +437,7 @@ Avoid building guesses. Write down what you're betting on (premium features _and
 
 ---
 
-### 2.3 Certificate Generation & Delivery
-
-**Owner**: Backend  
-**Deliverables** (if including in Premium):
-
-- [ ] Certificate template: PDF with learner name, resource completed, date, trainer signature (placeholder), QR code for verification
-- [ ] Trigger: System detects learner completed resource (e.g., accessed PDF for >10 min + took assessment)
-- [ ] Email delivery: "Your certificate is ready" + PDF download
-- [ ] Verification endpoint: QR code links to `/verify/[cert_id]` → shows certificate validity
-- [ ] Trainer can issue certificates manually: Dashboard button "Issue Certificate to Learner"
-
-**Success metric**:
-
-- 50+ certificates issued by month 2 of Premium
-- Verification endpoint queried >100x (proof of social sharing)
-
----
-
-### 2.4 Analytics Dashboard (Trainer Premium)
+### 2.3 Analytics Dashboard (Trainer Premium)
 
 **Owner**: Frontend + Backend  
 **Deliverables** (if including Trainer Premium):
