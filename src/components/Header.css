@@ -1,0 +1,132 @@
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: linear-gradient(180deg, var(--dark-secondary) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1001;
+  padding: 20px 0;
+}
+
+.header .container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-decoration: none;
+  cursor: pointer;
+  min-width: fit-content;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: var(--accent-blue);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.logo-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 28px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nav-menu a {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-menu a:hover {
+  color: var(--accent-blue);
+}
+
+.btn-download {
+  display: inline-block;
+  padding: 10px 15px;
+  background: transparent;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-light);
+  border-radius: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-download:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  color: white;
+  background: var(--accent-blue);
+
+}
+
+@media (max-width: 1024px) {
+  .nav-menu {
+    gap: 16px;
+  }
+  
+  .header-content {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .nav-menu {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 16px;
+  }
+
+  .nav-menu a {
+    font-size: 0.85rem;
+  }
+
+  .btn-download {
+    margin-left: auto;
+  }
+}
