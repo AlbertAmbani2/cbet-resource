@@ -237,6 +237,15 @@ export async function runMigrations(): Promise<void> {
       console.log('[Migrations] Payment plans already exist, skipping seed');
     }
 
+    // Migration 7: Add last_downloaded column to resources table
+    console.log('[Migrations] Migration 7: Adding last_downloaded column to resources...');
+    await query(`
+      ALTER TABLE resources ADD COLUMN IF NOT EXISTS last_downloaded TIMESTAMP;
+      CREATE INDEX IF NOT EXISTS idx_resources_last_downloaded ON resources(last_downloaded DESC);
+      CREATE INDEX IF NOT EXISTS idx_resources_download_count ON resources(download_count DESC);
+    `);
+    console.log('[Migrations] Migration 7 completed');
+
     console.log('[Migrations] All migrations completed successfully');
   } catch (error) {
     console.error('[Migrations] Migration failed:', error);

@@ -121,7 +121,7 @@ export default function ResourceBrowser() {
           <span className="section-kicker">Browse & Download</span>
           <h2 className="section-title">Find Verified CBET Resources</h2>
           <p className="section-subtitle">
-            Access {pagination.total}+ quality learning materials verified by educators. Download PDFs and use offline.
+            Access {pagination?.total || 0}+ quality learning materials verified by educators. Download PDFs and use offline.
           </p>
         </div>
 
@@ -236,7 +236,7 @@ export default function ResourceBrowser() {
             <p>
               {resources.length === 0
                 ? 'No resources found. Try adjusting your filters.'
-                : `Showing ${resources.length} of ${pagination.total} resource${pagination.total === 1 ? '' : 's'}`}
+                : `Showing ${resources.length} of ${pagination?.total || 0} resource${(pagination?.total || 0) === 1 ? '' : 's'}`}
             </p>
           </div>
         )}
@@ -255,7 +255,7 @@ export default function ResourceBrowser() {
             </div>
 
             {/* Pagination */}
-            {pagination.pages > 1 && (
+            {(pagination?.pages || 0) > 1 && (
               <div className="pagination">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
@@ -263,10 +263,10 @@ export default function ResourceBrowser() {
                 >
                   ← Previous
                 </button>
-                <span>Page {page} of {pagination.pages}</span>
+                <span>Page {page} of {pagination?.pages || 1}</span>
                 <button
-                  onClick={() => setPage(p => Math.min(pagination.pages, p + 1))}
-                  disabled={page === pagination.pages}
+                  onClick={() => setPage(p => Math.min(pagination?.pages || 1, p + 1))}
+                  disabled={page === (pagination?.pages || 1)}
                 >
                   Next →
                 </button>

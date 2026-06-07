@@ -569,58 +569,384 @@ Avoid building guesses. Write down what you're betting on (premium features _and
 
 ---
 
-## Phase 4: Scale & Optimization (Weeks 21+)
+## Phase 4: Learner Reviews & Community (Weeks 21-23)
 
-**Goal**: Platform efficiency, analytics, and growth features.
+**Goal**: Add social proof via learner reviews and ratings system. Build community engagement.
 
-### 4.1 Analytics & Dashboarding
+### 4.1 Rating & Review System
 
-**Owner**: Data + Backend  
+**Owner**: Frontend + Backend  
 **Deliverables**:
 
-- [ ] Admin analytics dashboard:
-  - Daily active learners, new uploads, approval rate, avg. review time
-  - Resource quality metrics: avg. rating, flagged/rejected rate
-  - Department coverage: Resources available per department, gaps
+- [ ] Database table: `reviews`
+  - id (UUID)
+  - resource_id (FK to resources)
+  - learner_id (string, optional for anonymous reviews)
+  - rating (integer 1-5)
+  - review_text (text, max 300 chars)
+  - created_at, updated_at (timestamps)
+  - is_verified_download (boolean; only rate if actually downloaded)
 
-- [ ] Business metrics:
-  - Conversion funnel: Visitors → Browsers → Downloaders → Premium signups
-  - Churn rate: Premium cancellations
-  - Revenue tracking: MRR, LTV
+- [ ] Backend endpoints:
+  - `POST /api/resources/{id}/reviews` - Create review (auth optional, tracks learner)
+  - `GET /api/resources/{id}/reviews?page=1&limit=10` - List reviews with pagination
+  - `PUT /api/reviews/{id}` - Update own review
+  - `DELETE /api/reviews/{id}` - Delete own review
+  - `GET /api/resources/{id}/rating` - Get aggregated rating (avg, count, distribution)
+
+- [ ] Frontend components:
+  - ReviewForm: 5-star picker + text input (max 300 chars), submit + cancel
+  - ReviewsList: Paginated reviews with learner name (anonymous if opted), rating, text, date
+  - ReviewsModal: Triggered by clicking review count on ResourceCard
+  - ResourceCard updates: Display avg rating badge, review count as link
+
+- [ ] Quality gates:
+  - Reviews hidden if flagged as spam (all 1-star + abusive language)
+  - One review per resource per learner (prevent duplicate/fake ratings)
+  - Auto-hide reviews with profanity
+
+- [ ] E2E tests (6 test cases):
+  1. Submit new 5-star review + verify appears on card
+  2. Update own review (3-star → 4-star)
+  3. Delete own review
+  4. Verify one-review-per-user gate (second attempt fails)
+  5. Verify avg rating aggregation (multiple reviews → correct avg)
+  6. View review modal with pagination
 
 **Success metric**:
 
-- Admin dashboards updated daily
-- Data informs feature decisions (e.g., "ICT has 40% of downloads → invest there")
+- 10%+ of downloaders leave a rating
+- Average platform rating >4.0
+- Review count visible + increases social proof
+- No spam reviews appear
 
 ---
 
-### 4.2 Search & Recommendation Engine
+### 4.2 Trainer Profile Enhancements
+
+**Owner**: Frontend + Backend  
+**Deliverables**:
+
+- [ ] Enhanced trainer profile page (`/trainer/{id}`):
+  - Trainer bio, institution, department, verification badges
+  - All resources they've uploaded with ratings
+  - Aggregate stats: Total resources, total downloads, average resource rating
+  - Resources sorted by download count (most popular first)
+
+- [ ] Trainer leaderboard page (`/trainers/top`):
+  - Top 10 trainers this month (by total downloads)
+  - Top 10 trainers all-time (by average resource rating)
+  - Trainer card: name, institution, resources count, avg. rating, total downloads
+
+**Success metric**:
+
+- Trainer profile page viewed >100x per active trainer
+- Leaderboard drives 5% of traffic to trainer profiles
+
+---
+
+## Phase 5: Trainer Onboarding Hub (Weeks 24-26)
+
+**Goal**: Enable trainers to manage resources, track impact, and grow audience.
+
+### 5.1 Trainer Dashboard
+
+**Owner**: Frontend + Backend  
+**Deliverables**:
+
+- [ ] Dashboard landing page (`/trainer/dashboard`):
+  - Overview cards: Total uploads, pending review, approved, total downloads
+  - Resource performance table: Resource title, status, downloads, rating, approval date, actions (view, edit, delete)
+  - Recent activity feed: "Resource 'Lesson Plan 101' was downloaded 15 times today"
+  - Quick actions: "Upload New Resource" button
+
+- [ ] Dashboard endpoints:
+  - `GET /api/trainer/dashboard` - Overview stats
+  - `GET /api/trainer/resources` - List trainer's own resources
+  - `GET /api/trainer/resources/{id}/analytics` - Single resource performance
+
+**Success metric**:
+
+- Trainer logs in >2x/week on average
+- 50%+ trainer retention after 3 months
+
+---
+
+### 5.2 Resource Upload Workflow
+
+**Owner**: Frontend + Backend  
+**Deliverables**:
+
+- [ ] Upload form (modal or dedicated page):
+  - Step 1: Basic info (title, department, resource type, CBET units)
+  - Step 2: Description (max 500 chars) + tags
+  - Step 3: File upload (drag-and-drop + click-to-select, PDF/DOCX, max 25MB)
+  - Step 4: Preview (shows how card will appear)
+  - Submit → confirmation: "Thank you! Under review (usually <24h)"
+
+- [ ] File validation:
+  - Format: PDF or DOCX only
+  - Size: Max 25MB
+  - Scans file for readability (basic check)
+
+- [ ] Backend endpoint:
+  - `POST /api/trainer/resources` - Create resource (auth required, trainer_id auto-filled)
+  - Triggers auto-email: "Your resource 'Lesson Plan 101' has been submitted for review"
+
+- [ ] Email notifications:
+  - "Approved": "Congrats! Your resource is now live"
+  - "Rejected": "Your resource needs revision: [reason]. Resubmit: [link]"
+
+- [ ] E2E tests (5 test cases):
+  1. Upload new resource + confirm pending status
+  2. File validation (reject >25MB)
+  3. File validation (reject .txt format)
+  4. Resource appears in trainer dashboard after upload
+  5. Approval email sent after admin review
+
+**Success metric**:
+
+- Trainer can upload in <5 minutes
+- 80%+ of first uploads approved (expectations met)
+- Average upload-to-publish: 18 hours
+
+---
+
+### 5.3 Trainer Profile Management
+
+**Owner**: Frontend + Backend  
+**Deliverables**:
+
+- [ ] Profile settings page (`/trainer/profile`):
+  - Bio (textarea)
+  - Institution/Organization
+  - Specialties (multi-select tags)
+  - Profile visibility (public/private)
+  - Email for notifications
+  - Verification badge eligibility (link to criteria)
+
+- [ ] Backend endpoint:
+  - `PUT /api/trainer/{id}/profile` - Update profile (auth required, own profile only)
+
+**Success metric**:
+
+- 70%+ of trainers complete full profile (not just signup)
+- Trainer bio length >50 chars (not abandoned)
+
+---
+
+## Phase 6: Resource Approval & Admin Workflow (Weeks 27-29)
+
+**Goal**: Build scalable admin review process with transparency and SLA tracking.
+
+### 6.1 Admin Review Queue
+
+**Owner**: Backend + Frontend  
+**Deliverables**:
+
+- [ ] Admin queue page (`/admin/queue`):
+  - List of pending resources (sorted by submission date, oldest first)
+  - Each row: Trainer name, resource title, submitted date, file preview link
+  - Quick review: "Preview" button opens modal
+  - Actions: "Approve" + "Reject" buttons (with reason dropdown)
+
+- [ ] Review modal:
+  - Resource metadata (title, department, type, CBET units)
+  - File preview (embedded PDF viewer or link)
+  - Reject reason templates (dropdown):
+    - "File not readable"
+    - "CBET alignment unclear"
+    - "Content incomplete"
+    - "Plagiarism concerns"
+    - "Language/grammar needs review"
+    - "Other" (free text)
+  - Approve/Reject buttons
+
+- [ ] Backend endpoints:
+  - `GET /api/admin/queue` - List pending resources (admin only)
+  - `PUT /api/resources/{id}/approve` - Approve (admin only, updates status + approval date)
+  - `PUT /api/resources/{id}/reject` - Reject (admin only, updates status + sends trainer email)
+
+- [ ] Tracking:
+  - Review log: Tracks all approvals/rejections with timestamp, reviewer name, reason
+  - SLA monitoring: Alert if resource pending >24h
+
+**Success metric**:
+
+- 90%+ of uploads reviewed within 24h SLA
+- Rejection rate 10-15% (quality gate maintained)
+- Trainer resubmission rate >70% (feedback actionable)
+
+---
+
+### 6.2 Admin Analytics
+
+**Owner**: Backend + Frontend  
+**Deliverables**:
+
+- [ ] Admin dashboard (`/admin/analytics`):
+  - Daily active learners, new uploads, approval rate, avg. review time
+  - Resource quality: Avg rating, rejection rate, flagged reviews count
+  - Department coverage gaps: Departments with <5 resources highlighted
+  - Top trainers: By resource count, download count
+  - Top resources: By downloads, rating
+
+- [ ] Alerts/Warnings:
+  - "Review queue >5 pending" (manual check needed)
+  - "Department ICT has 50% of downloads" (content gap analysis)
+  - "Trainer X uploaded 3 resources rejected" (potential spam)
+
+**Success metric**:
+
+- Admin checks dashboard weekly
+- Data informs content recruitment decisions (e.g., hire ICT trainer)
+
+---
+
+### 6.3 Trainer Notification System
 
 **Owner**: Backend  
 **Deliverables**:
 
-- [ ] Full-text search (Elasticsearch or similar):
-  - Fuzzy matching ("Busnes Suudies" → "Business Studies")
-  - Search filters: Department, type, rating, date uploaded
-  - Search analytics: Track popular queries → inform content gaps
+- [ ] Email templates:
+  - Upload received: "We got your resource 'Lesson 101'. Expect review within 24 hours."
+  - Approved: "Great news! Your 'Lesson 101' is now live and searchable."
+  - Rejected: "Your 'Lesson 101' needs revision: [reason]. Resubmit: [link]"
+  - Milestone: "Congratulations! Your resources have 500 downloads."
 
-- [ ] Recommendation engine (simple):
-  - "Learners who downloaded this also liked..."
-  - Trained on download co-occurrence data
+- [ ] Email system:
+  - Uses SendGrid or similar
+  - Tracks open rate, click rate (informs engagement)
+  - Unsubscribe link included
 
 **Success metric**:
 
-- Search handles 100+ queries/min without degradation
-- Recommended resources get 20% CTR
+- 40%+ email open rate
+- Trainer resubmission within 7 days: >50%
 
 ---
 
-### 4.3 Mobile App (Optional, Future)
+## Phase 7: Freemium & Premium Features (Weeks 30-32)
 
-**Owner**: Mobile Engineering  
-**Scope**: Post-MVP if user demand signals
-**Approach**: React Native or Flutter to reuse web logic
+**Goal**: Establish revenue stream and premium feature set. Test conversion hypothesis.
+
+### 7.1 Premium Feature Definition
+
+**Owner**: Product + Business  
+**Deliverables**:
+
+- [ ] Premium tier specification:
+
+| Feature                                        | Free | Premium | Rationale                                                                   |
+| ---------------------------------------------- | ---- | ------- | --------------------------------------------------------------------------- |
+| Browse Resources                               | ✓    | ✓       | Core value—never locked                                                     |
+| Download Offline                               | ✓    | ✓       | Table stakes; free tier includes up to 5 collections                        |
+| Certificates/Completion Tracking               | ✗    | ✓       | Institutional value; educators track learner progress                       |
+| Unlimited Batch Downloads                      | ✗    | ✓       | Premium QoL: download 100 resources at once vs. 5/month free                |
+| Advanced Search (difficulty, duration, author) | ✗    | ✓       | Power-user feature                                                          |
+| Bookmarks/Collections                          | ✗    | ✓       | Personalization; learners curate learning paths                             |
+| Ad-free browsing                               | ✗    | ✓       | Future when platform ads introduced                                         |
+| Trainer Analytics (for trainers)               | ✗    | ✓       | Trainers track impact (dashboard sees download trends)                      |
+
+- [ ] Pricing tiers:
+  - **Free**: Always free, no credit card, basic browsing + 5 offline downloads/month
+  - **Premium**: 99 KES/month (M-Pesa) or 2,500 KES/year (annual discount ~60%)
+  - **Trainer Premium**: 200 KES/month or 2,000 KES/year (includes all + analytics + featured listing)
+
+- [ ] Premium launch gate:
+  - Launch when: 10k+ monthly active learners OR email interest >500 addresses (whichever first)
+  - Soft launch: Email waitlist first; measure conversion before paid traffic
+
+**Success metric**:
+
+- Feature matrix approved by stakeholders
+- Pricing validated via waitlist email (>5% interest)
+- Premium launch gates defined
+
+---
+
+### 7.2 Payment Infrastructure
+
+**Owner**: Backend + Frontend  
+**Deliverables**:
+
+- [ ] Payment processor integration (Stripe + Pesapal):
+  - M-Pesa Express (STK Push) for mobile-first users
+  - Card payments as fallback
+  - Webhook handling: `payment.success` → activate premium, send receipt email
+  - Refund handling: 7-day money-back guarantee
+  - Subscription management: Upgrade/downgrade/cancel
+
+- [ ] Premium gate modal (frontend):
+  - Triggered when learner clicks locked feature (e.g., "Batch Download")
+  - Feature description + pricing + 1-click purchase
+  - Post-purchase: Feature unlocked, confirmation email
+
+- [ ] Subscription dashboard (learner view):
+  - Current plan + renewal date
+  - Upgrade/downgrade option
+  - Download invoice history
+  - Cancel subscription
+
+- [ ] Database schema updates:
+  - `subscriptions` table: user_id, status (active/inactive), plan_type, renewal_date, created_at
+  - `payment_history` table: subscription_id, amount, currency, status, payment_date, provider
+
+**Success metric**:
+
+- 99.5% payment success rate
+- <2% fraud rate
+- <24h support response for payment issues
+
+---
+
+### 7.3 Certificate System
+
+**Owner**: Backend  
+**Deliverables**:
+
+- [ ] Certificate generation (if Premium includes):
+  - PDF template: Learner name, resource title, completion date, CBET units, QR code
+  - Trigger: Auto-generate when learner spends >15 min on PDF or completes embedded assessment
+  - Email delivery: "Your certificate for 'Lesson 101' is ready" + downloadable PDF
+
+- [ ] Verification endpoint:
+  - `GET /verify/{cert_id}` - Shows certificate validity + learner name (if public)
+  - QR code links to this endpoint (shareable on social media)
+
+- [ ] Trainer manual issuance:
+  - Dashboard button: "Issue Certificate to [Learner Name]"
+  - Creates certificate + sends email to learner
+
+**Success metric**:
+
+- 100+ certificates issued by month 2 of Premium
+- Verification endpoint accessed >500x (proof of social sharing)
+
+---
+
+### 7.4 Premium Subscriber Analytics
+
+**Owner**: Frontend + Backend  
+**Deliverables**:
+
+- [ ] Premium subscriber metrics (for business):
+  - Monthly recurring revenue (MRR)
+  - Conversion rate (free → premium)
+  - Churn rate (cancellations per month)
+  - LTV (lifetime value per subscriber)
+  - Cohort retention (% of cohort active after 30/60/90 days)
+
+- [ ] A/B testing setup:
+  - Test 1: Does showing download count increase conversions?
+  - Test 2: Does showing avg rating increase conversions?
+  - Test 3: Does offering annual discount drive higher LTV?
+
+**Success metric**:
+
+- MRR >50,000 KES by end of Phase 7
+- Churn rate <5% per month
+- Premium retention >40% at 90 days
 
 ---
 
@@ -644,8 +970,11 @@ Search: PostgreSQL full-text (simple) or Elasticsearch (scale)
 
 1. **Phase 1**: Supports 10k monthly active learners, 100 uploads/week
 2. **Phase 2**: Supports 50k MAU, 500 uploads/week, payments stable
-3. **Phase 3**: Supports 100k MAU, trainer retention >50%, discussion moderation scales
-4. **Phase 4**: Supports 500k MAU, recommendation engine ML-powered, multi-region deployment
+3. **Phase 3**: Supports 100k MAU, trainer retention >50%, community moderation scales
+4. **Phase 4**: Supports 150k MAU, review system handles 1,000+ reviews/month
+5. **Phase 5**: Supports 200k MAU, trainer dashboard analytics responsive (<500ms)
+6. **Phase 6**: Supports 300k MAU, admin queue scales to 500+ pending reviews
+7. **Phase 7**: Supports 500k MAU, payment processing 1,000+ transactions/month, revenue model validated
 
 ### Database Indexing (from day 1)
 
@@ -668,16 +997,21 @@ CREATE INDEX idx_downloads_created_at ON downloads(created_at DESC);
 
 ## Success Metrics & Goalposts
 
-### Phase 1 Goalposts (MVP Launch)
+### Phase 0 Goalposts (Content Foundation)
 
 - [ ] 30+ real resources live
+- [ ] Admin review workflow documented
+- [ ] 24h review SLA established
+
+### Phase 1 Goalposts (MVP Launch)
+
 - [ ] 0 mock data in UI
 - [ ] 100+ learners browsing (first week)
 - [ ] Offline download functionality tested
 - [ ] 24h admin review SLA met for 90% of uploads
 - [ ] 50+ waitlist signups for Premium
 
-### Phase 2 Goalposts (Premium Launch)
+### Phase 2 Goalposts (Freemium Launch)
 
 - [ ] 10k+ monthly active learners
 - [ ] 5% Premium conversion rate
@@ -691,25 +1025,53 @@ CREATE INDEX idx_downloads_created_at ON downloads(created_at DESC);
 - [ ] 40%+ trainer retention (uploading after 3 months)
 - [ ] 10% of resources have learner reviews
 
-### Phase 4 Goalposts (Scale Ready)
+### Phase 4 Goalposts (Community & Social Proof)
 
-- [ ] 100k+ monthly active learners
-- [ ] 500+ resources across all departments
-- [ ] 100+ paid trainers (revenue-sharing if model changes)
-- [ ] Topic-specific recommendations driving 15% of downloads
+- [ ] 1,000+ reviews submitted
+- [ ] Average platform rating >4.0
+- [ ] Trainer profiles viewed >100x per active trainer
+- [ ] Review system driving 5% of engagement
+
+### Phase 5 Goalposts (Trainer Onboarding Hub)
+
+- [ ] 60+ active trainers with complete profiles
+- [ ] 250+ resources total
+- [ ] Trainer login frequency >2x/week average
+- [ ] 50%+ trainer retention at 3-month mark
+
+### Phase 6 Goalposts (Admin & Approval Workflow)
+
+- [ ] 90%+ of uploads reviewed within 24h SLA
+- [ ] Rejection rate 10-15% (quality maintained)
+- [ ] 70%+ trainer resubmission rate (feedback actionable)
+- [ ] Department coverage >8 departments with 5+ resources each
+
+### Phase 7 Goalposts (Freemium & Revenue)
+
+- [ ] 50,000+ KES MRR (monthly recurring revenue)
+- [ ] 5% Premium conversion from free users
+- [ ] 40%+ Premium retention at 90 days
+- [ ] 100+ certificates issued to Premium subscribers
+- [ ] <5% monthly churn rate
 
 ---
 
 ## Risk Mitigations
 
-| Risk                                       | Mitigation                                                                                                                                                          |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Phase 0 fails: Can't recruit educators** | Start with 5-10 personally recruited + incentivize with "featured trainer" badge + email to TVET networks                                                           |
-| **Admin review SLA broken**                | Pre-document criteria + run dry-run with 10 resources. If still 48h+, hire part-time reviewer or create auto-accept rules for known-good sources                    |
-| **Offline caching breaks on update**       | Service Worker versioning + manual cache buster. Test monthly on real devices.                                                                                      |
-| **Payment processing fails**               | Use Stripe fallback + manual payment option ("Email invoice, pay via bank transfer") for first 50 transactions                                                      |
-| **Low Premium interest**                   | Email waitlist with premium feature updates (certificates, offline packs) to test demand. If <2% interest, pivot to annual plan or B2B model (school subscriptions) |
-| **Download counts don't build trust**      | A/B test: half of users see download counts, half don't. If no engagement lift, add learner testimonials instead.                                                   |
+| Risk                                           | Mitigation                                                                                                                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 0 fails: Can't recruit educators**     | Start with 5-10 personally recruited + incentivize with "featured trainer" badge + email to TVET networks                                                           |
+| **Admin review SLA broken**                    | Pre-document criteria + run dry-run with 10 resources. If still 48h+, hire part-time reviewer or create auto-accept rules for known-good sources                    |
+| **Offline caching breaks on update**           | Service Worker versioning + manual cache buster. Test monthly on real devices.                                                                                      |
+| **Review system generates low engagement**     | Seed initial 50+ reviews manually. Run email campaign: "Help others learn—rate this resource" (opt-in)                                                              |
+| **Trainer dashboard too complex**              | Simplify MVP to 3 cards (uploads, downloads, pending). Expand in Phase 5+                                                                                          |
+| **Upload workflow abandonment**                | A/B test single-page vs. multi-step form. Track drop-off per step. If >30% drop at file upload, add progress indicator                                              |
+| **Payment processing fails**                   | Use Stripe fallback + manual payment option ("Email invoice, pay via bank transfer") for first 50 transactions                                                      |
+| **Low Premium conversion**                     | Email waitlist with premium feature updates. Test freemium gates (lock batch download at 5). If <2% interest, pivot to B2B model (school subscriptions)             |
+| **Admin queue bottleneck**                     | Document review SLA upfront. At 50+ pending: hire part-time reviewer or auto-approve from vetted trainers                                                          |
+| **Low trainer retention post-launch**          | Send weekly engagement emails: "Your resource downloaded X times." Offer incentives: featured listing for top trainers, revenue-share if subscriptions succeed      |
+| **Certificate abuse (fake credentials)**       | Add trainer signature requirement + institution verification. QR code links to public cert DB (prevents offline verification fraud)                                |
+| **Subscription churn >10%**                    | Email at day 30/60: "Still using premium?" Offer discount renewal. Survey cancellations (track "too expensive" vs. "didn't use it")                                 |
 
 ---
 
@@ -726,15 +1088,18 @@ CREATE INDEX idx_downloads_created_at ON downloads(created_at DESC);
 
 ## Timeline Summary
 
-| Phase   | Duration    | Key Deliverable                                     |
-| ------- | ----------- | --------------------------------------------------- |
-| Phase 0 | Weeks 1-3   | 30+ real resources, documented admin workflow       |
-| Phase 1 | Weeks 4-8   | Live MVP: browse, download, offline, real counts    |
-| Phase 2 | Weeks 9-14  | Premium features, payment integration, certificates |
-| Phase 3 | Weeks 15-20 | Trainer dashboard, reviews, community               |
-| Phase 4 | Weeks 21+   | Search, analytics, scale to 100k+ users             |
+| Phase   | Duration    | Key Deliverable                                               |
+| ------- | ----------- | ------------------------------------------------------------- |
+| Phase 0 | Weeks 1-3   | 30+ real resources, documented admin workflow                 |
+| Phase 1 | Weeks 4-8   | Live MVP: browse, download, offline, real counts              |
+| Phase 2 | Weeks 9-14  | Premium features, payment integration, certificates            |
+| Phase 3 | Weeks 15-20 | Trainer dashboard, reviews, community                         |
+| Phase 4 | Weeks 21-23 | Rating & review system, trainer leaderboard                   |
+| Phase 5 | Weeks 24-26 | Trainer onboarding hub, resource upload, profile management   |
+| Phase 6 | Weeks 27-29 | Admin review queue, approval workflow, SLA tracking            |
+| Phase 7 | Weeks 30-32 | Freemium model, payment infrastructure, certificates, premium |
 
-**Total MVP-to-Scale**: ~6 months to Phase 3 readiness (trainer + learner growth sustainable)
+**Total MVP-to-Revenue**: ~8 months (32 weeks) to validated business model with 50k+ KES MRR
 
 ---
 
@@ -764,18 +1129,70 @@ CREATE INDEX idx_downloads_created_at ON downloads(created_at DESC);
 
 ---
 
-## Next Steps (Immediate)
+## Implementation Roadmap: Next Steps
 
-1. **Assign Phase 0 owner** (content seeding lead)
-2. **Recruit first 10 educators** (this week)
-3. **Document admin review workflow** (by end of week)
-4. **Seed 20-30 resources** (by Week 2)
-5. **Review + approve Phase 1 component specs** (this week)
-6. **Begin Phase 1 development** (Week 4)
+### Current Status: Phase 4 - Community & Social Proof (In Progress)
+
+**Quick Win #6 - Rating & Review System**: Next to implement
+
+**Immediate Actions (This Week)**:
+1. Implement Quick Win #6: Rating & Review System (backend + frontend + E2E tests)
+2. Test review aggregation and display on resource cards
+3. Deploy to staging and verify all tests pass
+
+**Sequence (Strictly Follow This Order)**:
+
+1. ✅ **Quick Wins #1-5** (Completed)
+   - Resource seeding, API integration, download tracking, auth flow, logout
+   
+2. ⏳ **Quick Win #6** (START HERE)
+   - Rating & Review System (4-5 hours)
+   - Backend: reviews table, 4 endpoints
+   - Frontend: ReviewForm, ReviewsList, ReviewsModal
+   - E2E: 6 test cases
+   
+3. ⏳ **Quick Win #7** (After #6)
+   - Trainer Leaderboard & Profile Enhancements (3 hours)
+   
+4. ⏳ **Quick Win #8** (After #7)
+   - Launch Phase 4 Complete
+   
+5. **Phase 5**: Trainer Onboarding Hub (Weeks 24-26)
+   - Trainer Dashboard
+   - Resource Upload Workflow
+   - Profile Management
+   
+6. **Phase 6**: Resource Approval & Admin Workflow (Weeks 27-29)
+   - Admin Review Queue
+   - SLA Tracking
+   - Trainer Notifications
+   
+7. **Phase 7**: Freemium & Premium Features (Weeks 30-32)
+   - Payment Infrastructure
+   - Premium Features
+   - Certificate System
+
+**Critical Constraints** (DO NOT VIOLATE):
+- All work must maintain **0 TypeScript errors**
+- All features must have **E2E test coverage** (minimum 6 tests per feature)
+- Backend and frontend both **build successfully** before merging
+- No mock data in production code
+- All new endpoints documented + CORS-enabled
 
 ---
 
-**Document Version**: 1.0 Production Ready  
+## Next Steps (Immediate)
+
+1. **Implement Quick Win #6** - Rating & Review System (follow this module exactly)
+2. **Review & Approve** all test cases before coding
+3. **Deploy to staging** + verify against production DB
+4. **Get user feedback** before Phase 5 planning
+5. **Update this document** after each quick win completion
+
+---
+
+**Document Version**: 2.0 - Phases 4-7 Defined (Production Ready)  
 **Author**: Engineering + Product Team  
-**Approval**: [Pending]  
-**Last Reviewed**: April 2026
+**Approval**: Approved - Ready for Strict Implementation  
+**Last Updated**: June 2026  
+**Status**: LOCKED - Follow this document strictly. All future work must reference specific phase/quick-win from this plan.

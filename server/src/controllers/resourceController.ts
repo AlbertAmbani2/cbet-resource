@@ -23,7 +23,7 @@ function formatResourceResponse(row: any): Resource {
     fileUrl: row.file_url,
     status: row.status,
     uploadedAt: row.created_at,
-    approvalDate: row.approved_at,
+    approvalDate: row.approval_date,
     approvedBy: row.approved_by,
     downloadCount: row.download_count,
     rating: row.rating,
@@ -77,7 +77,7 @@ export async function listResources(req: Request, res: Response): Promise<void> 
     const result = await query(
       `SELECT * FROM resources 
        WHERE ${whereClause}
-       ORDER BY approved_at DESC, download_count DESC
+       ORDER BY approval_date DESC, download_count DESC
        LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params
     );

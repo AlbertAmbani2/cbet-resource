@@ -43,7 +43,7 @@ describe('Auth Flow E2E Tests', () => {
         json: async () => mockTrainerData,
       } as Response)
 
-      const { rerender } = render(<App />)
+      render(<App />)
 
       // Find and click signup CTA
       const buttons = screen.getAllByRole('button')
@@ -74,12 +74,10 @@ describe('Auth Flow E2E Tests', () => {
       // Fill profile info
       await waitFor(async () => {
         const fullNameInput = within(modal).getByLabelText(/full name/i)
-        const deptSelect = within(modal).getByDisplayValue('Select Department', {
-          selector: 'select',
-        })
+        const deptSelect = within(modal).getByRole('combobox', { name: /department/i })
 
         await user.type(fullNameInput, 'Jane Trainer')
-        await user.selectOptions(deptSelect, 'ICT')
+        await user.selectOptions(deptSelect as HTMLSelectElement, 'ICT')
       })
 
       // Submit signup
@@ -137,8 +135,6 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('clears localStorage on logout', async () => {
-      const user = userEvent.setup()
-
       // Set up auth state
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
@@ -166,7 +162,7 @@ describe('Auth Flow E2E Tests', () => {
 
   describe('Signin Flow → Dashboard Redirect → Profile Access', () => {
     it('navigates to /dashboard after successful signin and displays trainer profile', async () => {
-      const user = userEvent.setup()
+      const userSetup = userEvent.setup()
 
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
@@ -175,7 +171,7 @@ describe('Auth Flow E2E Tests', () => {
 
       // Navigate to signin page
       window.location.hash = '#/signin'
-      const { rerender } = render(<App />)
+      render(<App />)
 
       // Wait for signin page to load
       await waitFor(() => {
@@ -187,8 +183,8 @@ describe('Auth Flow E2E Tests', () => {
       const emailInput = screen.getByLabelText(/email/i)
       const passwordInput = screen.getByLabelText(/password/i)
 
-      await user.type(emailInput, 'trainer@example.com')
-      await user.type(passwordInput, 'SecurePass123!')
+      await userSetup.type(emailInput, 'trainer@example.com')
+      await userSetup.type(passwordInput, 'SecurePass123!')
 
       // Submit signin
       const signInButton = screen.getByRole('button', { name: /sign in/i })
@@ -228,8 +224,6 @@ describe('Auth Flow E2E Tests', () => {
 
   describe('Profile Update with Auth Headers', () => {
     it('includes x-trainer-id header in profile update request', async () => {
-      const user = userEvent.setup()
-
       // Set up auth state
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
@@ -263,11 +257,19 @@ describe('Auth Flow E2E Tests', () => {
 
       // Wait for profile form to load
       await waitFor(async () => {
-        const bioInput = screen.queryByDisplayValue(mockTrainerData.bio)
-        if (bioInput) {
-          // Found the bio field
-          await user.clear(bioInput as HTMLTextAreaElement)
-          await user.type(bioInput as HTMLTextAreaElement, 'Updated bio')
+        try {
+          const bioInputs = screen.queryAllByRole('textbox')
+          const bioInput = bioInputs.find(input => 
+            (input as HTMLTextAreaElement).value?.includes('Experienced')
+          )
+          if (bioInput) {
+            // Found the bio field
+            const userSetup = userEvent.setup()
+            await userSetup.clear(bioInput as HTMLTextAreaElement)
+            await userSetup.type(bioInput as HTMLTextAreaElement, 'Updated bio')
+          }
+        } catch (e) {
+          // Form not loaded yet
         }
       })
 
@@ -292,8 +294,6 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('updates header display after successful profile update', async () => {
-      const user = userEvent.setup()
-
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
@@ -348,8 +348,6 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('handles signup and signin mode switching correctly', async () => {
-      const user = userEvent.setup()
-
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         json: async () => mockTrainerData,
