@@ -172,6 +172,33 @@ export interface PaymentPlan {
 }
 
 // ============================================================================
+// Review Types
+// ============================================================================
+
+export interface Review {
+  id: string;
+  resourceId: string;
+  trainerId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+  updatedAt: string;
+  trainerName?: string;
+  trainerDepartment?: string;
+}
+
+export interface ReviewRequest {
+  rating: number;
+  comment?: string;
+}
+
+export interface RatingAggregate {
+  average: number;
+  count: number;
+  distribution: Record<number, number>;
+}
+
+// ============================================================================
 // API Response Wrappers
 // ============================================================================
 

@@ -7,9 +7,12 @@ if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
+// Disable SSL for local PostgreSQL; set PGSSLMODE=require for remote (e.g. Neon)
+const ssl = process.env.PGSSLMODE === 'require';
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: true, // Neon.tech requires SSL
+  ...(ssl ? { ssl: { rejectUnauthorized: false } } : {}),
 });
 
 pool.on('error', (err) => {
@@ -245,6 +248,32 @@ export async function runMigrations(): Promise<void> {
       CREATE INDEX IF NOT EXISTS idx_resources_download_count ON resources(download_count DESC);
     `);
     console.log('[Migrations] Migration 7 completed');
+
+    // Migration 8: Create reviews table
+    console.log('[Migrations] Migration 8: Creating reviews table...');
+    await query(`
+      CREATE TABLE IF NOT EXISTS reviews (
+        id UUID PRIMARY KEY,
+        resource_id UUID NOT NULL REFERENCES resources(id) ON DELETE CASCADE,
+        trainer_id UUID NOT NULL REFERENCES trainers(id) ON DELETE CASCADE,
+        rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(resource_id, trainer_id)
+      );
+    `);
+    console.log('[Migrations] Migration 8 completed');
+
+    // Create indexes for reviews table
+    console.log('[Migrations] Creating indexes on reviews table...');
+    await query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_resource_id ON reviews(resource_id);
+      CREATE INDEX IF NOT EXISTS idx_reviews_trainer_id ON reviews(trainer_id);
+      CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
+      CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON reviews(created_at DESC);
+    `);
+    console.log('[Migrations] Reviews indexes completed');
 
     console.log('[Migrations] All migrations completed successfully');
   } catch (error) {

@@ -22,11 +22,19 @@ export const API_ENDPOINTS = {
   TRAINER_ME_PROFILE: '/api/trainers/me/profile',
   TRAINER_UPDATE_PROFILE: (trainerId: string) => `/api/trainers/${trainerId}`,
 
+  // Leaderboard
+  TRAINER_LEADERBOARD: '/api/trainers/leaderboard',
+
   // Resources
   RESOURCE_UPLOAD: '/api/resources/upload',
   TRAINER_RESOURCES: (trainerId: string) => `/api/trainers/${trainerId}/resources`,
   APPROVED_RESOURCES: '/api/resources/approved',
   RESOURCE_BY_ID: (resourceId: string) => `/api/resources/${resourceId}`,
+
+  // Reviews
+  RESOURCE_REVIEWS: (resourceId: string) => `/api/resources/${resourceId}/reviews`,
+  RESOURCE_REVIEW: (resourceId: string, reviewId: string) => `/api/resources/${resourceId}/reviews/${reviewId}`,
+  RESOURCE_RATING: (resourceId: string) => `/api/resources/${resourceId}/rating`,
 
   // Subscriptions
   SUBSCRIPTION_STATUS: (trainerId: string) => `/api/trainers/${trainerId}/subscription`,

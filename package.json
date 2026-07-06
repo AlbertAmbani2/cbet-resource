@@ -5,23 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-<<<<<<< HEAD
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "recharts": "^3.7.0",
-    "react-dom": "^19.2.3",
-    "lucide-react": "^0.563.0",
-    "react": "^19.2.3",
-    "@google/genai": "^1.38.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
-=======
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -36,7 +19,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@tailwindcss/postcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.3.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -63,6 +46,5 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vitest": "^4.1.5"
->>>>>>> d1b24805188c04b6b4ab8e40f072ea814e35cd62
   }
 }

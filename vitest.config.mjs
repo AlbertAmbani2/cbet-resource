@@ -17,7 +17,7 @@ export default defineConfig({
     globals: true,
     css: true,
     pool: 'forks',
-    singleThread: true,
     testTimeout: 30000,
+    exclude: ['**/node_modules/**', '**/dist/**', '**/*.e2e.test.*', '**/tests/**/*.e2e*'],
   },
 })

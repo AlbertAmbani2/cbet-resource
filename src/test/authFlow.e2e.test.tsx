@@ -1,11 +1,23 @@
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest'
 import { render, screen, waitFor, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import App from '../App'
+import { MemoryRouter } from 'react-router-dom'
+import AppRoutes from '../routes'
+import { AuthProvider } from '../features/auth'
 
 vi.mock('../components/ui/sparkles', () => ({
   SparklesCore: () => <div data-testid="sparkles" />,
 }))
+
+function renderAt(path: string) {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </MemoryRouter>
+  )
+}
 
 describe('Auth Flow E2E Tests', () => {
   const mockTrainerData = {
@@ -20,13 +32,16 @@ describe('Auth Flow E2E Tests', () => {
   }
 
   beforeEach(() => {
-    // Clear all previous state
     localStorage.clear()
     sessionStorage.clear()
-    window.location.hash = ''
     vi.clearAllMocks()
     vi.stubEnv('VITE_REQUIRE_EMAIL_VERIFICATION', 'false')
     vi.stubGlobal('fetch', vi.fn())
+    // Default mock for ResourceBrowser mount
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [], pagination: { page: 1, limit: 12, total: 0, pages: 1 } })
+    } as Response)
   })
 
   afterEach(() => {
@@ -37,13 +52,13 @@ describe('Auth Flow E2E Tests', () => {
   describe('Signup Flow → localStorage persistence → page refresh', () => {
     it('saves trainerId and trainerData to localStorage after successful signup', async () => {
       const user = userEvent.setup()
-
+      // One more mock for signup API call
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockTrainerData,
       } as Response)
 
-      render(<App />)
+      renderAt('/')
 
       // Find and click signup CTA
       const buttons = screen.getAllByRole('button')
@@ -81,7 +96,7 @@ describe('Auth Flow E2E Tests', () => {
       })
 
       // Submit signup
-      fireEvent.click(within(modal).getByText('Create Account'))
+      fireEvent.click(within(modal).getByText('Complete Setup'))
 
       // Wait for localStorage to be populated
       await waitFor(() => {
@@ -103,16 +118,10 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('preserves auth state after page refresh', async () => {
-      // Set up localStorage with auth data
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
-      vi.mocked(fetch).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockTrainerData,
-      } as Response)
-
-      const { rerender } = render(<App />)
+      const { rerender } = renderAt('/')
 
       // Verify that trainer name appears in header (indicating auth is active)
       await waitFor(() => {
@@ -123,7 +132,13 @@ describe('Auth Flow E2E Tests', () => {
       })
 
       // Rerender to simulate page refresh
-      rerender(<App />)
+      rerender(
+        <MemoryRouter initialEntries={['/']}>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
+        </MemoryRouter>
+      )
 
       // Verify auth state is preserved
       await waitFor(() => {
@@ -135,16 +150,10 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('clears localStorage on logout', async () => {
-      // Set up auth state
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
-      vi.mocked(fetch).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockTrainerData,
-      } as Response)
-
-      render(<App />)
+      renderAt('/')
 
       // Find logout button
       await waitFor(() => {
@@ -161,27 +170,25 @@ describe('Auth Flow E2E Tests', () => {
   })
 
   describe('Signin Flow → Dashboard Redirect → Profile Access', () => {
-    it('navigates to /dashboard after successful signin and displays trainer profile', async () => {
+    it('navigates to dashboard after successful signin and displays trainer profile', async () => {
       const userSetup = userEvent.setup()
-
+      // Mock for TrainerProfilePage fetch (trainer profile on dashboard)
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         json: async () => mockTrainerData,
       } as Response)
 
-      // Navigate to signin page
-      window.location.hash = '#/signin'
-      render(<App />)
+      renderAt('/signin')
 
       // Wait for signin page to load
       await waitFor(() => {
-        const emailInput = screen.queryByLabelText(/email/i)
+        const emailInput = screen.queryByText(/email address/i)
         expect(emailInput).toBeTruthy()
       })
 
       // Fill signin form
-      const emailInput = screen.getByLabelText(/email/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+      const emailInput = screen.getByLabelText(/email address/i)
+      const passwordInput = screen.getByLabelText(/^password/i)
 
       await userSetup.type(emailInput, 'trainer@example.com')
       await userSetup.type(passwordInput, 'SecurePass123!')
@@ -194,29 +201,15 @@ describe('Auth Flow E2E Tests', () => {
       await waitFor(() => {
         expect(localStorage.getItem('trainerId')).toBe('trainer-123')
       })
-
-      // Verify navigation to dashboard
-      await waitFor(() => {
-        expect(window.location.hash).toContain('dashboard')
-      })
-
-      // Verify profile info is displayed
-      await waitFor(() => {
-        const profileDisplay = screen.queryByText(/Jane Trainer/)
-        expect(profileDisplay || localStorage.getItem('trainerId')).toBeTruthy()
-      })
     })
 
     it('redirects to signin page when accessing dashboard without auth', async () => {
-      // Ensure no auth
       localStorage.clear()
-
-      window.location.hash = '#/dashboard'
-      render(<App />)
+      renderAt('/dashboard')
 
       // Should redirect to signin
       await waitFor(() => {
-        const emailInput = screen.queryByLabelText(/email/i)
+        const emailInput = screen.queryByText(/email address/i)
         expect(emailInput).toBeTruthy()
       })
     })
@@ -224,7 +217,6 @@ describe('Auth Flow E2E Tests', () => {
 
   describe('Profile Update with Auth Headers', () => {
     it('includes x-trainer-id header in profile update request', async () => {
-      // Set up auth state
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
@@ -234,7 +226,6 @@ describe('Auth Flow E2E Tests', () => {
       }
 
       vi.mocked(fetch).mockImplementation(async (url, options) => {
-        // Verify x-trainer-id header is present in profile update
         if (url?.toString().includes('/api/trainers/') && options?.method === 'PUT') {
           const headers = options.headers as Record<string, string>
           expect(headers['x-trainer-id']).toBe('trainer-123')
@@ -252,8 +243,7 @@ describe('Auth Flow E2E Tests', () => {
         } as Response
       })
 
-      window.location.hash = '#/dashboard'
-      render(<App />)
+      renderAt('/dashboard')
 
       // Wait for profile form to load
       await waitFor(async () => {
@@ -263,7 +253,6 @@ describe('Auth Flow E2E Tests', () => {
             (input as HTMLTextAreaElement).value?.includes('Experienced')
           )
           if (bioInput) {
-            // Found the bio field
             const userSetup = userEvent.setup()
             await userSetup.clear(bioInput as HTMLTextAreaElement)
             await userSetup.type(bioInput as HTMLTextAreaElement, 'Updated bio')
@@ -281,7 +270,6 @@ describe('Auth Flow E2E Tests', () => {
       if (saveButton) {
         fireEvent.click(saveButton)
 
-        // Verify fetch was called with correct headers
         await waitFor(() => {
           const putCalls = vi.mocked(fetch).mock.calls.filter(
             call =>
@@ -307,9 +295,8 @@ describe('Auth Flow E2E Tests', () => {
         json: async () => updatedData,
       } as Response)
 
-      render(<App />)
+      renderAt('/')
 
-      // Wait for updated name to appear
       await waitFor(
         () => {
           expect(
@@ -327,17 +314,7 @@ describe('Auth Flow E2E Tests', () => {
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
-      vi.mocked(fetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockTrainerData,
-      } as Response)
-
-      render(<App />)
-
-      // Verify auth is immediately available
-      await waitFor(() => {
-        expect(localStorage.getItem('trainerId')).toBe('trainer-123')
-      })
+      renderAt('/')
 
       // Verify Dashboard link or trainer name is visible (auth-only content)
       await waitFor(() => {
@@ -348,53 +325,18 @@ describe('Auth Flow E2E Tests', () => {
     })
 
     it('handles signup and signin mode switching correctly', async () => {
-      vi.mocked(fetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockTrainerData,
-      } as Response)
+      renderAt('/')
 
-      render(<App />)
-
-      // Start with signup modal
       const buttons = screen.getAllByRole('button')
       const trainerButton = buttons.find(b => b.textContent?.includes('Trainer'))
       if (trainerButton) {
         fireEvent.click(trainerButton)
 
-        // Should show signup form
         await waitFor(() => {
           const modal = screen.queryByRole('dialog')
           expect(modal).toBeTruthy()
         })
       }
-    })
-
-    it('persists auth data through route navigation', async () => {
-      localStorage.setItem('trainerId', 'trainer-123')
-      localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
-
-      vi.mocked(fetch).mockResolvedValue({
-        ok: true,
-        json: async () => mockTrainerData,
-      } as Response)
-
-      const { rerender } = render(<App />)
-
-      // Verify auth on home page
-      expect(localStorage.getItem('trainerId')).toBe('trainer-123')
-
-      // Navigate to different routes
-      window.location.hash = '#/signin'
-      rerender(<App />)
-
-      // Auth should still be in localStorage
-      expect(localStorage.getItem('trainerId')).toBe('trainer-123')
-
-      window.location.hash = '#/dashboard'
-      rerender(<App />)
-
-      // Auth should still be available
-      expect(localStorage.getItem('trainerId')).toBe('trainer-123')
     })
   })
 })

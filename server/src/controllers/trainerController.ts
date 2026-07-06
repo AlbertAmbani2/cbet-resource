@@ -255,3 +255,105 @@ export async function getMyProfile(req: Request, res: Response): Promise<void> {
     res.status(500).json(err);
   }
 }
+
+/**
+ * GET /api/trainers/leaderboard
+ * Top trainers by download count
+ */
+export async function getLeaderboard(req: Request, res: Response): Promise<void> {
+  try {
+    const { limit = '10' } = req.query as { limit?: string };
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit) || 10));
+
+    const result = await query(
+      `SELECT id, full_name, department, bio, institution, verification_status,
+              total_uploads, total_downloads, created_at
+       FROM trainers
+       WHERE total_downloads > 0
+       ORDER BY total_downloads DESC
+       LIMIT $1`,
+      [limitNum]
+    );
+
+    const trainers = result.rows.map(row => ({
+      id: row.id,
+      fullName: row.full_name,
+      department: row.department,
+      bio: row.bio,
+      institution: row.institution,
+      verificationStatus: row.verification_status,
+      totalUploads: parseInt(row.total_uploads) || 0,
+      totalDownloads: parseInt(row.total_downloads) || 0,
+      createdAt: row.created_at
+    }));
+
+    res.status(200).json({ data: trainers });
+  } catch (error) {
+    console.error('[Controller] Get leaderboard error:', error);
+    const err: ApiError = {
+      error: 'Failed to retrieve leaderboard',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    };
+    res.status(500).json(err);
+  }
+}
+
+/**
+ * GET /api/trainers/:id/resources
+ * List approved resources for a specific trainer
+ */
+export async function getTrainerResources(req: Request, res: Response): Promise<void> {
+  try {
+    const trainerId = req.params.id;
+    const { page = '1', limit = '12' } = req.query as { page?: string; limit?: string };
+
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 12));
+    const offset = (pageNum - 1) * limitNum;
+
+    const countResult = await query(
+      'SELECT COUNT(*) as count FROM resources WHERE trainer_id = $1 AND status = $2',
+      [trainerId, 'approved']
+    );
+    const total = parseInt(countResult.rows[0].count);
+
+    const result = await query(
+      `SELECT * FROM resources
+       WHERE trainer_id = $1 AND status = $2
+       ORDER BY created_at DESC
+       LIMIT $3 OFFSET $4`,
+      [trainerId, 'approved', limitNum, offset]
+    );
+
+    const resources = result.rows.map((row: any) => ({
+      id: row.id,
+      trainerId: row.trainer_id,
+      title: row.title,
+      department: row.department,
+      resourceType: row.resource_type,
+      description: row.description,
+      fileUrl: row.file_url,
+      status: row.status,
+      downloadCount: row.download_count,
+      rating: row.rating,
+      createdAt: row.created_at
+    }));
+
+    res.status(200).json({
+      data: resources,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        pages: Math.ceil(total / limitNum)
+      }
+    });
+  } catch (error) {
+    console.error('[Controller] Get trainer resources error:', error);
+    const err: ApiError = {
+      error: 'Failed to retrieve trainer resources',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    };
+    res.status(500).json(err);
+  }
+}

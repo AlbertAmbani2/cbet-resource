@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import trainerRoutes from './routes/trainerRoutes.js';
 import resourceRoutes from './routes/resourceRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 import { query, runMigrations } from './db.js';
 
 dotenv.config();
@@ -65,7 +66,7 @@ app.use('/api/resources', (req, res, next) => {
   }
 
   next();
-}, resourceRoutes);
+}, resourceRoutes, reviewRoutes);
 
 app.use('/api/analytics', (req, res, next) => {
   if (databaseStatus !== 'ready') {
