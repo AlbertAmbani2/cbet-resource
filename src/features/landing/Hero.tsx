@@ -29,39 +29,51 @@ export default function Hero() {
       <div className="container">
         <div className="hero-content">
           <div className="hero-left">
-            <button className="badge">Find Verified Learning Materials</button>
-            <h1 className="hero-title">Find Quality CBET<br />Resources in Seconds</h1>
+            <button className="badge">Empowering Kenyan Educators</button>
+            <h1 className="hero-title">Share, Discover &<br />Download CBET Resources</h1>
             <p className="hero-description">
-              Browse 30+ verified lesson plans, notes, and assessments from experienced educators.
-              Download PDFs for free and use them offline. No login required to get started.
+              Kenya's largest free library of verified lesson plans, notes, and assessments —
+              built by TVET trainers, for TVET trainers. Download ready-to-use materials and
+              spend less time planning, more time teaching.
             </p>
             <div className="hero-buttons">
-              <a href="#resources" className="btn-primary">Browse Now</a>
+              <a href="#resources" className="btn-primary">Start Browsing Free</a>
               <TrainerCTA
                 variant="secondary"
                 label="Become a Trainer"
                 onSignupClick={() => openSignup('hero')}
               />
             </div>
+            <div className="hero-trust">
+              <span className="trust-badge">Used by educators across Kenya</span>
+            </div>
           </div>
 
           <div className="hero-right">
-            <img src="/images/hero-image.png" alt="Browse CBET Resources" className="hero-image" />
+            <div className="hero-visual">
+              <div className="hero-photo-frame">
+                <img
+                  src="/images/hero-photo.png"
+                  alt="TVET student working with tools"
+                  className="hero-photo"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="stats-section">
           <div className="stat">
-            <div className="stat-value">30+</div>
-            <div className="stat-label">Verified Resources</div>
+            <div className="stat-value">1,200+</div>
+            <div className="stat-label">Resources Downloaded</div>
           </div>
           <div className="stat">
-            <div className="stat-value">10+ Trainers</div>
-            <div className="stat-label">Expert Educators</div>
+            <div className="stat-value">50+</div>
+            <div className="stat-label">Active TVET Trainers</div>
           </div>
           <div className="stat">
-            <div className="stat-value">1-Day SLA</div>
-            <div className="stat-label">Resource Review Guarantee</div>
+            <div className="stat-value">4.3★</div>
+            <div className="stat-label">Average Resource Rating</div>
           </div>
         </div>
       </div>

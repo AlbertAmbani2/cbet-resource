@@ -22,6 +22,7 @@ interface TrainerData {
   department: string
   createdAt: string
   isVerified: boolean
+  isAdmin?: boolean
 }
 
 interface AuthContextType {

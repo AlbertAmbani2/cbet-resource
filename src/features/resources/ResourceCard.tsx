@@ -104,7 +104,9 @@ export default function ResourceCard({ resource, onDownload }: ResourceCardProps
       </div>
 
       {/* Title */}
-      <h3 className="card-title">{resource.title}</h3>
+      <Link to={`/resources/${resource.id}`} className="card-title-link">
+        <h3 className="card-title">{resource.title}</h3>
+      </Link>
 
       {/* CBET Units */}
       {resource.cbetUnits && (

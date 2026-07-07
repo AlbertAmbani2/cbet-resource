@@ -162,12 +162,22 @@
 }
 
 /* Title */
+.card-title-link {
+  text-decoration: none;
+  display: block;
+}
+
+.card-title-link:hover .card-title {
+  color: #0AA26D;
+}
+
 .card-title {
   font-size: 16px;
   font-weight: 700;
   margin: 0 0 8px 0;
   color: #111827;
   line-height: 1.4;
+  transition: color 0.2s ease;
 }
 
 /* Meta: Department + Type */

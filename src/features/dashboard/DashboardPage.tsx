@@ -4,6 +4,7 @@ import { useAuth } from '../auth'
 import { API_ENDPOINTS, HTTP_HEADERS } from '@shared/constants'
 import type { TrainerResponse } from '@shared/types'
 import { ProfileUpdateForm } from './ProfileUpdateForm'
+import { SubscriptionSection } from '../subscription'
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
@@ -131,6 +132,10 @@ export function DashboardPage() {
             <ProfileUpdateForm profile={profile} onSuccess={handleProfileUpdate} />
           )}
         </div>
+
+        {!loading && profile && (
+          <SubscriptionSection trainerId={profile.id} />
+        )}
       </div>
     </div>
   )

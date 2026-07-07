@@ -45,7 +45,11 @@ export default function Header() {
             {trainerData ? (
               <>
                 <span className="header-user mobile-only">{trainerData.fullName}</span>
+                <Link to="/upload" className="btn-download mobile-only" onClick={handleNavClick}>Upload Resource</Link>
                 <Link to="/dashboard" className="btn-download mobile-only" onClick={handleNavClick}>Dashboard</Link>
+                {trainerData.isAdmin && (
+                  <Link to="/admin" className="btn-download mobile-only" onClick={handleNavClick}>Admin</Link>
+                )}
                 <button type="button" className="btn-download mobile-only" onClick={handleLogout}>Logout</button>
               </>
             ) : (
@@ -56,7 +60,11 @@ export default function Header() {
           {trainerData ? (
             <div className="header-actions desktop-only">
               <span className="header-user">{trainerData.fullName}</span>
+              <Link to="/upload" className="btn-download">Upload Resource</Link>
               <Link to="/dashboard" className="btn-download">Dashboard</Link>
+              {trainerData.isAdmin && (
+                <Link to="/admin" className="btn-download">Admin</Link>
+              )}
               <button type="button" className="btn-download" onClick={handleLogout}>
                 Logout
               </button>

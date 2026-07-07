@@ -36,8 +36,15 @@ export const API_ENDPOINTS = {
   RESOURCE_REVIEW: (resourceId: string, reviewId: string) => `/api/resources/${resourceId}/reviews/${reviewId}`,
   RESOURCE_RATING: (resourceId: string) => `/api/resources/${resourceId}/rating`,
 
+  // Admin
+  ADMIN_PENDING_RESOURCES: '/api/admin/resources/pending',
+  ADMIN_APPROVE_RESOURCE: (resourceId: string) => `/api/admin/resources/${resourceId}/approve`,
+  ADMIN_REJECT_RESOURCE: (resourceId: string) => `/api/admin/resources/${resourceId}/reject`,
+
   // Subscriptions
   SUBSCRIPTION_STATUS: (trainerId: string) => `/api/trainers/${trainerId}/subscription`,
+  SUBSCRIPTION_UPDATE: (trainerId: string) => `/api/trainers/${trainerId}/subscription`,
+  SUBSCRIPTION_CANCEL: (trainerId: string) => `/api/trainers/${trainerId}/subscription/cancel`,
   PAYMENT_PLANS: '/api/payment-plans',
   PAYMENT_HISTORY: (trainerId: string) => `/api/trainers/${trainerId}/payments`,
 } as const;

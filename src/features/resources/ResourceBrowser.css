@@ -14,22 +14,13 @@
   margin-bottom: 40px;
 }
 
-.section-kicker {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #0AA26D;
-  margin-bottom: 12px;
-}
-
-.section-title {
-  font-size: 32px;
-  font-weight: 700;
+.browser-header .section-title {
   color: #0f172a;
   margin-bottom: 16px;
-  line-height: 1.2;
+}
+
+.browser-header .section-kicker {
+  font-weight: 600;
 }
 
 .section-subtitle {
