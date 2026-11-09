@@ -214,8 +214,8 @@ async function seedResources() {
 
       await query(
         `INSERT INTO resources 
-         (id, trainer_id, title, department, resource_type, description, cbet_units, file_url, status, download_count, rating, created_at, approved_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())`,
+         (id, trainer_id, title, department, resource_type, description, cbet_units, file_url, status, download_count, rating, created_at, uploaded_at, approval_date)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW(), NOW())`,
         [
           resourceId,
           trainerId,

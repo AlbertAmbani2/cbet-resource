@@ -16,7 +16,14 @@ cd server
 cp .env.example .env
 ```
 
-Edit `server/.env`:
+PowerShell equivalent:
+
+```powershell
+Set-Location server
+Copy-Item .env.example .env
+```
+
+Edit `server/.env` and replace the PostgreSQL password with your local password:
 
 ```env
 PORT=3000

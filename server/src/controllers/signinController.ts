@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import { query } from '../db'
-import { validatePassword } from '../passwordHelper'
-import { ApiError } from '../types'
+import { query } from '../db.js'
+import { validatePassword } from '../passwordHelper.js'
+import { ApiError } from '../types.js'
 
 /**
  * POST /api/trainers/signin

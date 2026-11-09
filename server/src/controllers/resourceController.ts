@@ -112,7 +112,7 @@ export async function getResourceById(req: Request, res: Response): Promise<void
     const { id } = req.params;
 
     const result = await query(
-      'SELECT * FROM resources WHERE id = $1',
+      "SELECT * FROM resources WHERE id = $1 AND status = 'approved'",
       [id]
     );
 
@@ -142,7 +142,7 @@ export async function getResourceStats(req: Request, res: Response): Promise<voi
     const { id } = req.params;
 
     const result = await query(
-      `SELECT id, title, download_count, rating, created_at, approved_at, status
+      `SELECT id, title, download_count, rating, created_at, approval_date, status
        FROM resources WHERE id = $1`,
       [id]
     );
@@ -159,7 +159,7 @@ export async function getResourceStats(req: Request, res: Response): Promise<voi
       downloadCount: row.download_count,
       rating: row.rating,
       createdAt: row.created_at,
-      approvedAt: row.approved_at,
+      approvedAt: row.approval_date,
       status: row.status
     });
   } catch (error) {
