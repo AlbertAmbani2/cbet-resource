@@ -83,7 +83,9 @@ export default function ResourceBrowser() {
       setResources(data.data)
       setPagination(data.pagination)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unable to load resources'
+      const message = err instanceof TypeError
+        ? `Could not reach the server at ${API_URL}. Make sure the backend is running.`
+        : err instanceof Error ? err.message : 'Unable to load resources'
       setError(message)
       console.error('[ResourceBrowser] Fetch error:', err)
     } finally {

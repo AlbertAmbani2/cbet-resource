@@ -3,7 +3,7 @@
   min-height: 100vh;
   background-color: var(--dark-bg);
   color: var(--text-light);
-  overflow: hidden;
+  overflow-x: clip;
   position: relative;
 }
 

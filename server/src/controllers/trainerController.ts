@@ -150,9 +150,12 @@ function validateProfileUpdate(body: unknown): { valid: boolean; error?: string 
     if (typeof update.contactEmail !== 'string') {
       return { valid: false, error: 'contactEmail must be a string' };
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(update.contactEmail)) {
-      return { valid: false, error: 'contactEmail format is invalid' };
+    const email = update.contactEmail.trim();
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return { valid: false, error: 'contactEmail format is invalid' };
+      }
     }
   }
 
@@ -168,7 +171,7 @@ export async function getTrainerProfile(req: Request, res: Response): Promise<vo
     const trainerId = req.params.id;
 
     const result = await query(
-      'SELECT id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, total_uploads, total_downloads, created_at, updated_at FROM trainers WHERE id = $1',
+      'SELECT id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, is_admin, total_uploads, total_downloads, created_at, updated_at FROM trainers WHERE id = $1',
       [trainerId]
     );
 
@@ -198,6 +201,12 @@ export async function updateTrainerProfile(req: Request, res: Response): Promise
     }
 
     const update = req.body as TrainerProfileUpdate;
+    const fullName = update.fullName?.trim();
+    const bio = update.bio?.trim();
+    const institution = update.institution?.trim();
+    const contactEmail = update.contactEmail?.trim();
+    const department = update.department;
+
     const result = await query(
       `UPDATE trainers SET
          full_name = COALESCE($1, full_name),
@@ -207,8 +216,15 @@ export async function updateTrainerProfile(req: Request, res: Response): Promise
          department = COALESCE($5, department),
          updated_at = NOW()
        WHERE id = $6
-       RETURNING id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, total_uploads, total_downloads, created_at, updated_at`,
-      [update.fullName, update.bio, update.institution, update.contactEmail, update.department, trainerId]
+       RETURNING id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, is_admin, total_uploads, total_downloads, created_at, updated_at`,
+      [
+        fullName || null,
+        bio || null,
+        institution || null,
+        contactEmail || null,
+        department ?? null,
+        trainerId
+      ]
     );
 
     if (result.rows.length === 0) {
@@ -236,7 +252,7 @@ export async function getMyProfile(req: Request, res: Response): Promise<void> {
     }
 
     const result = await query(
-      'SELECT id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, total_uploads, total_downloads, created_at, updated_at FROM trainers WHERE id = $1',
+      'SELECT id, email, full_name, department, bio, institution, contact_email, verification_status, is_verified, is_admin, total_uploads, total_downloads, created_at, updated_at FROM trainers WHERE id = $1',
       [trainerId]
     );
 

@@ -162,11 +162,9 @@ rejects may still be accepted by the API.
 | 5 | Medium | API client adoption is inconsistent. `src/lib/api.ts` is used only by the 4 newest features (upload, admin, subscription, resource detail); 10 older files still use raw `fetch`. | `src/features/**` |
 | 6 | Medium | `resourceController.ts:14` types its row as `any`, violating the project's own no-`any` rule (and hiding B3/B4). | `server/src/controllers/resourceController.ts:14` |
 | 7 | Low | Frontend tests cannot execute in this sandbox — the vitest worker fails to spawn (`Timeout waiting for worker to respond`) under both `forks` and `threads` pools. Needs verification on a normal machine. | `vitest.config.mjs` |
-| 8 | Low | `docs/ARCHITECTURE.md` is stale: claims React Router v6 (actual: v7), omits the `admin/`, `upload/`, `resourceDetail/`, `subscription/` feature folders, and describes both Tailwind and plain-CSS as in use. | `docs/ARCHITECTURE.md` |
 | 9 | Low | `docs/API.md` documents only implemented endpoints, so the upload/admin/subscription endpoints the frontend calls are undocumented — correct today, but it hides the gap. It also lists `GET /api/resources/:resourceId/rating` under a heading implying a different path shape than `reviewRoutes.ts` registers. | `docs/API.md` |
 | 10 | Low | The removed `IMPLEMENTATION_PLAN.md` / `docs/IMPLEMENTATION.md` (deleted in `d1b2480`) leaves no roadmap of record. This file now carries that role. | — |
 | 11 | Low | `useTrainerSignup` is now a 5-line passthrough to `useAuth` — a vestigial indirection with no behaviour of its own. | `src/features/onboarding/hooks/useTrainerSignup.ts` |
-| 12 | Low | Uncommitted work in the tree: `Hero.tsx` Tailwind rewrite + new `public/images/hero4.jpg`. The rewrite drops the `TrainerCTA` component and contradicts the "no Tailwind in new components" convention below. | working tree |
 
 ---
 
@@ -257,10 +255,12 @@ Before starting, ensure PostgreSQL is running and the database exists:
 
 ### CSS
 
-- Use CSS custom properties from `src/index.css` (`--accent-blue`, `--text-light`, …) — do not hardcode colours.
-- Each component owns its CSS file, co-located.
-- Breakpoints: 480px / 768px / 1024px.
-- **Do not add Tailwind classes to new components** — the project uses plain CSS. (Exception in flight: the uncommitted `Hero.tsx` rewrite. Decide: revert, or adopt Tailwind as the project standard and update this rule.)
+- **Tailwind CSS v4 is the standard for new UI**, especially the trainer portal and shared `src/components/ui` primitives.
+- Brand tokens live in `src/tailwind.css` under `@theme` (`brand-50` … `brand-900`, `--font-sans`). Prefer `bg-brand-500`, `text-brand-600`, etc. over hardcoded hex values.
+- Legacy landing/auth components keep their plain CSS files; do not rewrite them just for styling consistency.
+- `src/index.css` still exposes CSS custom properties (`--accent-blue`, `--text-light`, …) for legacy styles. `--accent-blue` is the green brand colour `#0AA26D`.
+- Breakpoints: 480px / 768px / 1024px (Tailwind defaults: `sm` 640, `md` 768, `lg` 1024, `xl` 1280).
+- Use `cn()` from `src/lib/utils.ts` when composing conditional Tailwind classes.
 
 ### Testing
 

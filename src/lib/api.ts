@@ -15,7 +15,7 @@ export class ApiError extends Error {
 function getAuthHeaders(): Record<string, string> {
   const trainerId = localStorage.getItem('trainerId')
   const headers: Record<string, string> = {
-    [HTTP_HEADERS.CONTENT_TYPE_JSON]: 'application/json',
+    [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
   }
   if (trainerId) {
     headers[HTTP_HEADERS.TRAINER_ID_HEADER] = trainerId

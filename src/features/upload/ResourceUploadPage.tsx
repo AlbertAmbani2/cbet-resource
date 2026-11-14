@@ -1,9 +1,9 @@
 import { useState, useRef, type FormEvent } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, Upload, FileText, AlertTriangle, CheckCircle, Loader, Laptop, Briefcase, Car, Hotel, HardHat, Plane, Palmtree, Stethoscope, Users, X } from 'lucide-react'
-import { useAuth } from '../auth'
+import { Link } from 'react-router-dom'
+import { Upload, FileText, AlertTriangle, CheckCircle, Loader, Laptop, Briefcase, Car, Hotel, HardHat, Plane, Palmtree, Stethoscope, Users, X } from 'lucide-react'
 import { api } from '../../lib/api'
 import { API_ENDPOINTS, RESOURCE_TYPES, DEPARTMENTS } from '@shared/constants'
+import { PageHeader } from '../../components/ui'
 import type { Resource } from '@shared/types'
 
 const DEPARTMENT_ICONS: Record<string, React.ReactNode> = {
@@ -27,8 +27,6 @@ interface FormState {
 }
 
 export default function ResourceUploadPage() {
-  const { trainerData, isInitialized } = useAuth()
-  const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [form, setForm] = useState<FormState>({
@@ -43,22 +41,6 @@ export default function ResourceUploadPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({})
-
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-slate-500">
-          <Loader size={20} className="animate-spin" />
-          <span>Loading...</span>
-        </div>
-      </div>
-    )
-  }
-
-  if (!trainerData) {
-    navigate('/signin')
-    return null
-  }
 
   const updateField = (field: keyof FormState, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -124,26 +106,26 @@ export default function ResourceUploadPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl p-10 max-w-lg w-full text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
-            <CheckCircle size={32} className="text-emerald-600" />
+      <div className="flex items-center justify-center py-10">
+        <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-50">
+            <CheckCircle size={32} className="text-brand-600" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Resource Uploaded!</h2>
-          <p className="text-slate-600 mb-6">Your resource has been submitted for review. It will be published once approved by an admin.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <h2 className="mb-2 text-2xl font-bold text-slate-900">Resource uploaded</h2>
+          <p className="mb-6 text-sm text-slate-600">Your resource has been submitted for review. It will be published once approved by an admin.</p>
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <button
               type="button"
               onClick={() => setSuccess(false)}
-              className="rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white hover:bg-sky-700 transition"
+              className="rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-600"
             >
-              Upload Another
+              Upload another
             </button>
             <Link
-              to="/dashboard"
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-6 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+              to="/dashboard/resources"
+              className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
             >
-              Go to Dashboard
+              View my resources
             </Link>
           </div>
         </div>
@@ -152,26 +134,15 @@ export default function ResourceUploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4">
-      <div className="mx-auto w-full max-w-3xl">
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-sky-600 mb-6 transition-colors"
-        >
-          <ArrowLeft size={14} /> Back to Dashboard
-        </Link>
+    <div className="mx-auto w-full max-w-3xl">
+      <PageHeader
+        eyebrow="Upload"
+        title="Upload a resource"
+        description="Share your CBET teaching materials with other educators. Submissions are reviewed before publishing."
+        className="mb-6"
+      />
 
-        <div className="rounded-3xl bg-white p-8 shadow-xl">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center">
-              <Upload size={20} className="text-sky-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">Upload Resource</h1>
-              <p className="text-sm text-slate-500 mt-0.5">Share your CBET teaching materials with other educators</p>
-            </div>
-          </div>
-
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
           {error && (
             <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 flex items-start gap-3">
               <AlertTriangle size={18} className="text-red-500 shrink-0 mt-0.5" />
@@ -190,7 +161,7 @@ export default function ResourceUploadPage() {
                 value={form.title}
                 onChange={e => updateField('title', e.target.value)}
                 placeholder="e.g. HTML & CSS Fundamentals - Lesson Plan"
-                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-sky-500 ${fieldErrors.title ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-sky-200'}`}
+                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-brand-500 ${fieldErrors.title ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-brand-200'}`}
               />
               {fieldErrors.title && <p className="mt-1 text-xs text-red-600">{fieldErrors.title}</p>}
             </div>
@@ -207,12 +178,12 @@ export default function ResourceUploadPage() {
                       type="button"
                       className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs transition ${
                         form.department === dept
-                          ? 'border-sky-500 bg-sky-50 text-sky-700'
-                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-sky-300'
+                          ? 'border-brand-500 bg-brand-50 text-brand-700'
+                          : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-brand-300'
                       }`}
                       onClick={() => updateField('department', dept)}
                     >
-                      <span className={form.department === dept ? 'text-sky-600' : 'text-slate-400'}>
+                      <span className={form.department === dept ? 'text-brand-600' : 'text-slate-400'}>
                         {DEPARTMENT_ICONS[dept]}
                       </span>
                       <span className="font-medium">{dept}</span>
@@ -230,8 +201,8 @@ export default function ResourceUploadPage() {
                   id="resourceType"
                   value={form.resourceType}
                   onChange={e => updateField('resourceType', e.target.value)}
-                  className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-sky-500 ${
-                    fieldErrors.resourceType ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-sky-200'
+                  className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-brand-500 ${
+                    fieldErrors.resourceType ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-brand-200'
                   }`}
                 >
                   <option value="">Select type...</option>
@@ -255,8 +226,8 @@ export default function ResourceUploadPage() {
                 onChange={e => updateField('description', e.target.value)}
                 rows={4}
                 placeholder="Describe what this resource covers, its intended audience, and key topics..."
-                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-sky-500 ${
-                  fieldErrors.description ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-sky-200'
+                className={`w-full rounded-2xl border bg-slate-50 px-4 py-3 text-sm outline-none focus:ring-2 focus:border-brand-500 ${
+                  fieldErrors.description ? 'border-red-300 focus:ring-red-200' : 'border-slate-200 focus:ring-brand-200'
                 }`}
               />
               <p className="mt-1 text-xs text-slate-400 text-right">{form.description.length}/5000</p>
@@ -273,7 +244,7 @@ export default function ResourceUploadPage() {
                 value={form.cbetUnits}
                 onChange={e => updateField('cbetUnits', e.target.value)}
                 placeholder="e.g. Unit 301, Unit 302"
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
               />
             </div>
 
@@ -282,8 +253,8 @@ export default function ResourceUploadPage() {
                 File <span className="text-red-500">*</span>
               </label>
               {file ? (
-                <div className="flex items-center gap-3 rounded-2xl border border-sky-200 bg-sky-50 p-3">
-                  <FileText size={20} className="text-sky-600 shrink-0" />
+                <div className="flex items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-3">
+                  <FileText size={20} className="text-brand-600 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-900 truncate">{file.name}</p>
                     <p className="text-xs text-slate-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
@@ -291,7 +262,7 @@ export default function ResourceUploadPage() {
                   <button
                     type="button"
                     onClick={removeFile}
-                    className="p-1 rounded-full hover:bg-sky-100 transition"
+                    className="p-1 rounded-full hover:bg-brand-100 transition"
                     aria-label="Remove file"
                   >
                     <X size={16} className="text-slate-400" />
@@ -301,7 +272,7 @@ export default function ResourceUploadPage() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center hover:border-sky-400 hover:bg-sky-50 transition"
+                  className="w-full rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center hover:border-brand-400 hover:bg-brand-50 transition"
                 >
                   <Upload size={28} className="mx-auto text-slate-400 mb-2" />
                   <p className="text-sm font-medium text-slate-600">Click to select a file</p>
@@ -320,7 +291,7 @@ export default function ResourceUploadPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-2xl bg-sky-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-2"
+              className="w-full rounded-2xl bg-brand-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 inline-flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -335,7 +306,6 @@ export default function ResourceUploadPage() {
               )}
             </button>
           </form>
-        </div>
       </div>
     </div>
   )

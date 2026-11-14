@@ -134,13 +134,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCurrentStep(0)
     setError(null)
     setSuccess(false)
-    setFormData({
-      email: formData.email, // Keep email when switching
+    setFormData(prev => ({
+      ...prev,
       password: '',
       fullName: '',
       department: ''
-    })
-  }, [formData.email])
+    }))
+  }, [])
 
   const nextStep = useCallback(() => {
     const maxSteps = mode === 'signup' ? 3 : 1 // Signin only has 1 step

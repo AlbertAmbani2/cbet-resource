@@ -177,6 +177,7 @@ export const PAYMENT_PLAN_DETAILS = {
 // ============================================================================
 
 export const HTTP_HEADERS = {
+  CONTENT_TYPE: 'Content-Type',
   CONTENT_TYPE_JSON: 'application/json',
   TRAINER_ID_HEADER: 'x-trainer-id',
   AUTHORIZATION_HEADER: 'Authorization',

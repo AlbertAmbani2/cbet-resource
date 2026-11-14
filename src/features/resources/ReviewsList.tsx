@@ -54,7 +54,7 @@ export function ReviewsList({ resourceId, trainerId, onReviewChanged }: ReviewsL
         {
           method: 'DELETE',
           headers: {
-            [HTTP_HEADERS.CONTENT_TYPE_JSON]: 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.CONTENT_TYPE_JSON,
             [HTTP_HEADERS.TRAINER_ID_HEADER]: trainerId
           }
         }

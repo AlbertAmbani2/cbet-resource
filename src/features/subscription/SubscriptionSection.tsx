@@ -64,10 +64,7 @@ export function SubscriptionSection({ trainerId }: SubscriptionSectionProps) {
   }
 
   return (
-    <div className="mt-10">
-      <h2 className="text-2xl font-semibold text-slate-900">Subscription & Billing</h2>
-      <p className="mt-2 text-slate-600">Manage your plan and view payment history.</p>
-
+    <div>
       {loading && (
         <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-8 flex items-center justify-center">
           <div className="flex items-center gap-3 text-slate-500">
@@ -88,8 +85,8 @@ export function SubscriptionSection({ trainerId }: SubscriptionSectionProps) {
           <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center">
-                  <Zap size={22} className="text-sky-600" />
+                <div className="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center">
+                  <Zap size={22} className="text-brand-600" />
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900">{planDetails?.name || 'Free'} Plan</p>
@@ -108,7 +105,7 @@ export function SubscriptionSection({ trainerId }: SubscriptionSectionProps) {
                   </span>
                 )}
                 {subscription?.autoRenew && (
-                  <span className="text-xs font-medium text-sky-700 bg-sky-50 rounded-full px-3 py-1 border border-sky-200">
+                  <span className="text-xs font-medium text-brand-700 bg-brand-50 rounded-full px-3 py-1 border border-brand-200">
                     Auto-renew
                   </span>
                 )}
@@ -159,7 +156,7 @@ export function SubscriptionSection({ trainerId }: SubscriptionSectionProps) {
                         key={plan.id}
                         className={`rounded-2xl border p-5 ${
                           isCurrentPlan
-                            ? 'border-sky-300 bg-sky-50'
+                            ? 'border-brand-300 bg-brand-50'
                             : 'border-slate-200 bg-white hover:shadow-md'
                         } transition`}
                       >
@@ -179,7 +176,7 @@ export function SubscriptionSection({ trainerId }: SubscriptionSectionProps) {
                           </ul>
                         )}
                         {isCurrentPlan && (
-                          <p className="mt-4 text-xs font-medium text-sky-700">Current plan</p>
+                          <p className="mt-4 text-xs font-medium text-brand-700">Current plan</p>
                         )}
                       </div>
                     )

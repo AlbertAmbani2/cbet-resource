@@ -10,17 +10,21 @@ Full-stack application with a React frontend and Express/PostgreSQL backend. Sha
 
 ```
 src/
-├── components/ui/           # Reusable generic components (ErrorBoundary)
+├── components/ui/           # Design primitives (Button, Card, Badge, Avatar, …)
 ├── features/
+│   ├── admin/               # AdminPage (pending-resource review)
 │   ├── auth/                # AuthProvider, AuthContext, SignInPage
-│   ├── dashboard/           # DashboardPage, ProfileUpdateForm
-│   ├── landing/             # Hero, HowItWorks, FAQ, TrainersHub, LandingSections
+│   ├── dashboard/           # Portal pages: Overview, Profile, Resources, Subscription, Settings
+│   ├── landing/             # LandingPage, Hero, HowItWorks, FAQ, TrainersHub, LandingSections
 │   ├── leaderboard/         # LeaderboardPage
 │   ├── onboarding/          # TrainerSignupModal, TrainerCTA, TrainerOnboarding
 │   ├── resources/           # ResourceBrowser, ResourceCard, ResourceReviewModal
-│   └── trainer/             # TrainerProfilePage
-├── layouts/                 # Header, Footer
-├── routes/                  # Centralized route definitions
+│   ├── resourceDetail/      # ResourceDetailPage
+│   ├── subscription/        # SubscriptionSection
+│   ├── trainer/             # Public TrainerProfilePage
+│   └── upload/              # ResourceUploadPage
+├── layouts/                 # PublicLayout, TrainerLayout, Header, Footer
+├── routes/                  # AppRoutes, RequireAuth, ScrollToTop
 ├── config/                  # App-level config (trainerOnboarding.ts)
 ├── App.tsx                  # BrowserRouter + AppRoutes only
 └── main.tsx                 # Entry point
@@ -36,15 +40,24 @@ Routes are defined in `src/routes/index.tsx` and consumed by `App.tsx`:
 </Router>
 ```
 
-`AppRoutes` wraps the app in `<AuthProvider>` and renders a persistent `<TrainerSignupModal>` overlay alongside all routes. The landing page (`/`) renders a fixed sequence:
+`AppRoutes` wraps the app in `<AuthProvider>`. Two shells keep marketing and the trainer workspace separate:
 
-1. `<Header />` — sticky nav with auth-aware actions
-2. `<Hero />` — full-viewport hero with particles, CTAs, stats
-3. `<HowItWorks />` — learner/visitor flow (browse → download → review)
-4. `<ResourceBrowser />` — department grid + resource listing
-5. `<TrainersHub />` — trainer process steps + benefits + CTA
-6. `<FAQ />` — accordion FAQ + stats grid
-7. `<Footer />` — links, trainer CTAs, newsletter
+| Area | Layout | Routes |
+| --- | --- | --- |
+| Public marketing + profiles | `PublicLayout` (Header, Footer, signup modal) | `/`, `/signin`, `/leaderboard`, `/trainer/:id`, `/resources/:id` |
+| Trainer portal (auth required) | `TrainerLayout` (sidebar + topbar) | `/dashboard`, `/dashboard/resources`, `/dashboard/upload`, `/dashboard/profile`, `/dashboard/subscription`, `/dashboard/settings`, `/dashboard/admin` |
+
+`RequireAuth` redirects unauthenticated visitors to `/signin?next=<path>`. Legacy `/upload` and `/admin` URLs redirect into the portal. The marketing header no longer renders trainer controls; signed-in visitors get a single **Dashboard** link.
+
+The landing page renders through `PublicLayout`, which owns the fixed header, footer, and signup modal. `LandingPage` renders the section sequence:
+
+1. `<Hero />` — full-viewport hero with particles, CTAs, stats
+2. `<HowItWorks />` — learner/visitor flow (browse → download → review)
+3. `<ResourceBrowser />` — department grid + resource listing
+4. `<TrainersHub />` — trainer process steps + benefits + CTA
+5. `<FAQ />` — accordion FAQ + stats grid
+
+`<Header />` and `<Footer />` are supplied by `PublicLayout`, not by the landing page itself.
 
 ### Feature Pattern
 
@@ -57,9 +70,9 @@ Each feature follows the same convention:
 ### Key Libraries
 
 - **Vite** — build tool
-- **React Router v6** — client-side routing
-- **Tailwind CSS** — utility-first styling
-- **CSS modules** — component-specific styles (gradually migrating to Tailwind)
+- **React Router v7** — client-side routing
+- **Tailwind CSS v4** — primary styling system for new UI and the trainer portal (theme tokens in `src/tailwind.css`)
+- **Plain CSS** — legacy landing/auth styles, kept where already established
 - **Vitest** — test runner
 
 ## Backend (`server/`)

@@ -1,13 +1,32 @@
 import type { FormEvent } from 'react'
-import { useEffect, useRef } from 'react'
-import { ArrowLeft } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
+import { ArrowLeft, Eye, EyeOff, Loader2, LockKeyhole, Mail } from 'lucide-react'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
 import { useAuth } from './AuthContext'
+import { Avatar, Button } from '../../components/ui'
 
 export function SignInPage() {
-  const { formData, updateFormData, submitForm, error, success, isLoading, switchMode, trainerData, mode } = useAuth()
+  const {
+    formData,
+    updateFormData,
+    submitForm,
+    error,
+    success,
+    isLoading,
+    switchMode,
+    trainerData,
+    mode,
+    isInitialized,
+  } = useAuth()
   const navigate = useNavigate()
-  const formRef = useRef<HTMLFormElement>(null)
+  const [searchParams] = useSearchParams()
+  const [showPassword, setShowPassword] = useState(false)
+
+  const nextPath = useMemo(() => {
+    const next = searchParams.get('next')
+    return next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard'
+  }, [searchParams])
 
   useEffect(() => {
     switchMode('signin')
@@ -15,101 +34,111 @@ export function SignInPage() {
 
   useEffect(() => {
     if (success && trainerData && mode === 'signin') {
-      navigate('/dashboard')
+      navigate(nextPath, { replace: true })
     }
-  }, [success, trainerData, mode, navigate])
+  }, [success, trainerData, mode, navigate, nextPath])
+
+  if (isInitialized && trainerData && !success) {
+    return <Navigate to={nextPath} replace />
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     await submitForm()
   }
 
-  const handleSignInClick = () => {
-    formRef.current?.requestSubmit()
-  }
-
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Sign In</h1>
-          <p className="text-slate-600">Enter your registered email and password.</p>
-        </div>
-
-        {error && (
-          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="signin-email" className="block text-sm font-medium text-slate-700">
-              Email Address
-            </label>
-            <input
-              id="signin-email"
-              type="email"
-              value={formData.email}
-              onChange={event => updateFormData('email', event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-              placeholder="you@example.com"
-              required
-            />
+    <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md">
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60">
+          <div className="bg-gradient-to-br from-brand-500 via-brand-600 to-emerald-700 px-8 py-8 text-white">
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/70">Trainer portal</p>
+            <h1 className="mt-1 text-2xl font-bold">Welcome back</h1>
+            <p className="mt-1 text-sm text-white/80">Sign in to manage your resources and profile.</p>
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="signin-password" className="block text-sm font-medium text-slate-700">
-              Password
-            </label>
-            <input
-              id="signin-password"
-              type="password"
-              value={formData.password}
-              onChange={event => updateFormData('password', event.target.value)}
-              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+          <div className="p-8">
+            {error && (
+              <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                {error}
+              </div>
+            )}
 
-          <div className="mt-8 space-y-4">
-            <button
-              type="button"
-              onClick={handleSignInClick}
-              className="w-full rounded-2xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-300 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Signing in…' : 'Sign In'}
-            </button>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <label className="block space-y-1.5 text-sm">
+                <span className="font-medium text-slate-700">Email address</span>
+                <span className="relative block">
+                  <Mail size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    id="signin-email"
+                    type="email"
+                    value={formData.email}
+                    onChange={event => updateFormData('email', event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    required
+                  />
+                </span>
+              </label>
 
-            <div className="text-center">
-              <Link
-                to="/"
-                className="inline-block font-medium text-sky-600 transition hover:text-sky-800"
+              <label className="block space-y-1.5 text-sm">
+                <span className="font-medium text-slate-700">Password</span>
+                <span className="relative block">
+                  <LockKeyhole size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    id="signin-password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={event => updateFormData('password', event.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-11 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                    placeholder="Enter your password"
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(value => !value)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </span>
+              </label>
+
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={isLoading}
+                leadingIcon={isLoading ? <Loader2 size={16} className="animate-spin" /> : undefined}
               >
-                <ArrowLeft size={16} />
-                Back to homepage
+                {isLoading ? 'Signing in…' : 'Sign in'}
+              </Button>
+            </form>
+
+            {success && trainerData && (
+              <div className="mt-5 flex items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-700">
+                <Avatar name={trainerData.fullName} size="sm" />
+                <span>Signed in as {trainerData.fullName}. Taking you to your dashboard…</span>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center justify-between text-sm">
+              <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-800">
+                <ArrowLeft size={15} /> Back to site
+              </Link>
+              <Link to="/signin" className="font-medium text-brand-600 hover:text-brand-700">
+                Need help?
               </Link>
             </div>
           </div>
-        </form>
-
-        {success && (
-          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
-            Successfully signed in. You can now continue to the app.
-          </div>
-        )}
-
-        {trainerData && (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            Signed in as {trainerData.fullName} ({trainerData.email})
-          </div>
-        )}
-
-        <div className="mt-8 text-center text-sm text-slate-500">
-          Need help? Contact support if you cannot sign in.
         </div>
+
+        <p className="mt-6 text-center text-xs text-slate-400">
+          CBET Resource Platform · Trainer access
+        </p>
       </div>
     </div>
   )

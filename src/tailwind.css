@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-50: #e8f8f0;
+  --color-brand-100: #c9efdd;
+  --color-brand-200: #9be3c3;
+  --color-brand-300: #63d2a3;
+  --color-brand-400: #2ebb83;
+  --color-brand-500: #0aa26d;
+  --color-brand-600: #088a5d;
+  --color-brand-700: #07704c;
+  --color-brand-800: #075a3e;
+  --color-brand-900: #064a34;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

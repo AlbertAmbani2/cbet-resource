@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, AlertTriangle, CircleCheckBig, Eye, EyeOff, Laptop, Briefcase, Car, Hotel, HardHat, Plane, Palmtree, Stethoscope, Users } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
@@ -44,6 +44,15 @@ export function TrainerSignupModal() {
   const [showPassword, setShowPassword] = useState(false)
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [errors, setErrors] = useState<FieldErrors>({})
+
+  useEffect(() => {
+    if (!isOpen || !success) return
+    const timer = window.setTimeout(() => {
+      closeAuth()
+      navigate('/dashboard', { replace: true })
+    }, 1800)
+    return () => window.clearTimeout(timer)
+  }, [isOpen, success, closeAuth, navigate])
 
   if (!isOpen) return null
 
@@ -128,9 +137,15 @@ export function TrainerSignupModal() {
               <div className="success-content">
                 <CircleCheckBig size={20} />
                 <span>Account created successfully!</span>
-                <p className="success-subtext">Your account is ready. Sign in to continue.</p>
-                <button className="btn-primary" onClick={handleGoToSignIn}>
-                  Go to Sign In
+                <p className="success-subtext">Your account is ready. Taking you to your dashboard…</p>
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    closeAuth()
+                    navigate('/dashboard', { replace: true })
+                  }}
+                >
+                  Go to dashboard
                 </button>
               </div>
             </div>

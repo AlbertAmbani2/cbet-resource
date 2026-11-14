@@ -153,19 +153,15 @@ describe('Auth Flow E2E Tests', () => {
       localStorage.setItem('trainerId', 'trainer-123')
       localStorage.setItem('trainerData', JSON.stringify(mockTrainerData))
 
-      renderAt('/')
+      renderAt('/dashboard')
 
-      // Find logout button
+      const logoutButton = await screen.findByLabelText(/log out/i)
+      fireEvent.click(logoutButton)
+
       await waitFor(() => {
-        const logoutButton = screen.queryByText(/Logout/i)
-        if (logoutButton) {
-          fireEvent.click(logoutButton)
-        }
+        expect(localStorage.getItem('trainerId')).toBeNull()
+        expect(localStorage.getItem('trainerData')).toBeNull()
       })
-
-      // Verify localStorage is cleared
-      expect(localStorage.getItem('trainerId')).toBeNull()
-      expect(localStorage.getItem('trainerData')).toBeNull()
     })
   })
 
@@ -243,7 +239,7 @@ describe('Auth Flow E2E Tests', () => {
         } as Response
       })
 
-      renderAt('/dashboard')
+      renderAt('/dashboard/profile')
 
       // Wait for profile form to load
       await waitFor(async () => {
